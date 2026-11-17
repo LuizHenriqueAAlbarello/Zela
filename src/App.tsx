@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
+import Rodape from './components/Rodape'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -39,6 +40,8 @@ export default function App() {
           <Route path="*" element={<NaoEncontrada />} />
         </Routes>
       </main>
+
+      <Rodape />
     </div>
   )
 }
