@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
-import Marca from './components/Marca'
+import Header from './components/Header'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -25,7 +25,7 @@ export default function App() {
       <RolarParaTopo />
 
       {/* Provisório: o Header de verdade entra na próxima etapa */}
-      <div className="border-b border-borda px-5 py-4 sm:px-8"><Marca /></div>
+      <div className="border-b border-borda px-5 py-4 sm:px-8"><Header /></div>
 
       <main id="conteudo" className="flex-1">
         <Routes>
