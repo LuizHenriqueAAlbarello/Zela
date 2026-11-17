@@ -6,6 +6,8 @@ import Letreiro from '../components/Letreiro'
 import Garoa from '../components/Garoa'
 import MapaCalor from '../components/MapaCalor'
 import CaminhoLuz, { type Parada } from '../components/CaminhoLuz'
+import SeloStatus from '../components/SeloStatus'
+import BotaoLink from '../components/Botao'
 import { useRevelar } from '../hooks/useRevelar'
 import { CHAMADOS_RECENTES, TEMPO_POR_ZONA } from '../services/dadosExemplo'
 import { CATEGORIAS } from '../services/categorias'
@@ -227,6 +229,61 @@ function Espera() {
   )
 }
 
+function Apoio() {
+  const apoios = 23
+  // Regra RN04: o buraco começa com peso 4 e sobe 1 nível a cada 5 apoios (máximo 5)
+  const prioridade = Math.min(5, 4 + Math.floor(apoios / 5))
+  return (
+    <section className="border-t border-borda bg-noite">
+      <div className="mx-auto grid max-w-[1320px] gap-12 px-5 py-24 sm:px-8 md:py-32 lg:grid-cols-2 lg:items-center lg:gap-20">
+        <div className="lg:order-2">
+          <h2 className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">Já tem chamado? Apoie em vez de repetir.</h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">
+            Se o buraco já está no mapa, um toque em <strong className="text-papel">Eu também vi</strong> vale mais
+            que um chamado novo. A cada cinco apoios a prioridade sobe um nível, e a prefeitura enxerga
+            quantas pessoas passam pelo problema.
+          </p>
+        </div>
+
+        <article className="relative overflow-hidden rounded-3xl border border-borda bg-noite-2 lg:order-1">
+          {/* Brilho de poste no canto do cartão */}
+          <div aria-hidden="true" className="absolute -top-24 -right-16 size-72 rounded-full bg-sodio/20 blur-3xl" />
+          <header className="relative flex flex-wrap items-center justify-between gap-3 border-b border-borda px-6 py-5">
+            <p className="rotulo text-[15px]"><span className="numeros text-mudo">#0412</span> · Buraco na via</p>
+            <SeloStatus status="EM_EXECUCAO" />
+          </header>
+          <div className="relative px-6 py-6">
+            <p className="text-[15px] text-mudo">Rua Dona Belmira Marin, 1200 · Grajaú</p>
+            <dl className="mt-6 grid grid-cols-2 gap-6">
+              <div>
+                <dt className="text-[13px] font-semibold text-mudo">Apoios</dt>
+                <dd className="numeros titulo mt-1 text-[52px]">{apoios}</dd>
+              </div>
+              <div>
+                <dt className="text-[13px] font-semibold text-mudo">Prioridade</dt>
+                <dd className="mt-3 flex flex-wrap items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <span
+                      key={n}
+                      aria-hidden="true"
+                      className={`h-5 w-2.5 rounded-full ${n <= prioridade ? 'bg-sodio shadow-[0_0_10px_rgba(255,154,60,.7)]' : 'bg-noite-3'}`}
+                    />
+                  ))}
+                  <span className="numeros ml-2 font-semibold whitespace-nowrap">{prioridade} de 5</span>
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-borda pt-6">
+              <BotaoLink para="/chamados/412">Eu também vi</BotaoLink>
+              <span className="text-[14px] text-mudo">Previsão da IA: <strong className="numeros text-papel">6 dias</strong></span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   useRevelar()
   return (
@@ -235,6 +292,7 @@ export default function Home() {
       <Letreiro chamados={CHAMADOS_RECENTES} />
       <Caminho />
       <Espera />
+      <Apoio />
     </>
   )
 }
