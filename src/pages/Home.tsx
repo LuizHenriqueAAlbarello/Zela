@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import Letreiro from '../components/Letreiro'
+import Garoa from '../components/Garoa'
 import { CHAMADOS_RECENTES } from '../services/dadosExemplo'
 import { CATEGORIAS } from '../services/categorias'
 import type { CategoriaId } from '../types/chamado'
@@ -140,11 +141,30 @@ function Hero() {
   )
 }
 
+function Caminho() {
+  return (
+    <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#07080C_0%,#0D0F15_100%)]">
+      <Garoa className="-z-10" />
+      <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+        <div className="grid gap-6 lg:grid-cols-[1fr_minmax(0,420px)] lg:items-end lg:gap-16">
+          <h2 className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">Do seu celular até a equipe na rua</h2>
+          <p className="text-mudo">
+            Todo chamado passa pelos mesmos quatro postes. A cada etapa concluída um deles acende,
+            e você sempre sabe onde o seu parou, mesmo debaixo de garoa.
+          </p>
+        </div>
+        {/* Os postes do caminho entram na próxima etapa */}
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   return (
     <>
       <Hero />
       <Letreiro chamados={CHAMADOS_RECENTES} />
+      <Caminho />
     </>
   )
 }
