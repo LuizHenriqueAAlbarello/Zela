@@ -4,12 +4,12 @@ import Header from './components/Header'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
-
+/** Ao trocar de página, volta para o topo (o navegador não faz isso sozinho numa SPA). */
 function RolarParaTopo() {
   const { pathname } = useLocation()
-useEffect(() => {
-  window.scrollTo(0, 0)
-}, [pathname])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
   return null
 }
 
@@ -23,9 +23,7 @@ export default function App() {
         Pular para o conteúdo
       </a>
       <RolarParaTopo />
-
-      {/* Provisório: o Header de verdade entra na próxima etapa */}
-      <div className="border-b border-borda px-5 py-4 sm:px-8"><Header /></div>
+      <Header />
 
       <main id="conteudo" className="flex-1">
         <Routes>
