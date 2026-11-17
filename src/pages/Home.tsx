@@ -317,6 +317,33 @@ function Categorias() {
   )
 }
 
+function Chamada() {
+  return (
+    <section className="relative isolate overflow-hidden border-t border-borda bg-noite">
+      {/* A luz de um poste caindo sobre a chamada final */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(60%_90%_at_50%_0%,rgba(255,154,60,.28),rgba(255,154,60,.06)_45%,transparent_70%)]"
+      />
+      {/* A lâmpada do poste, no topo da seção */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-1/2 -z-10 h-1.5 w-28 -translate-x-1/2 rounded-b-full bg-sodio shadow-[0_0_40px_10px_rgba(255,154,60,.5)]"
+      />
+      <div className="mx-auto flex max-w-[1320px] flex-col items-center px-5 py-28 text-center sm:px-8 md:py-36">
+        <h2 className="titulo text-[clamp(2.8rem,8vw,6rem)]">Sua rua merece resposta.</h2>
+        <p className="mt-6 max-w-[44ch] text-mudo">
+          Abrir um chamado leva menos de um minuto. Apoiar um que já existe, um toque.
+        </p>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <BotaoLink para="/chamados/novo">Abrir chamado</BotaoLink>
+          <BotaoLink para="/chamados" variante="contorno">Ver chamados</BotaoLink>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   useRevelar()
   return (
@@ -327,6 +354,7 @@ export default function Home() {
       <Espera />
       <Apoio />
       <Categorias />
+      <Chamada />
     </>
   )
 }
