@@ -1,9 +1,46 @@
+import { useEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Marca from './components/Marca'
+import EmObra from './pages/EmObra'
+import NaoEncontrada from './pages/NaoEncontrada'
+
+
+function RolarParaTopo() {
+  const { pathname } = useLocation()
+useEffect(() => {
+  window.scrollTo(0, 0)
+}, [pathname])
+  return null
+}
 
 export default function App() {
   return (
-    <main className="grid min-h-dvh place-items-center gap-6 p-8">
-      <Marca />
-    </main>
+    <div className="flex min-h-dvh flex-col">
+      <a
+        href="#conteudo"
+        className="sr-only z-50 bg-sodio px-4 py-3 font-bold text-noite focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+      >
+        Pular para o conteúdo
+      </a>
+      <RolarParaTopo />
+
+      {/* Provisório: o Header de verdade entra na próxima etapa */}
+      <div className="border-b border-borda px-5 py-4 sm:px-8"><Marca /></div>
+
+      <main id="conteudo" className="flex-1">
+        <Routes>
+          <Route path="/" element={<EmObra titulo="Início" />} />
+          <Route path="/chamados" element={<EmObra titulo="Chamados" />} />
+          <Route path="/chamados/novo" element={<EmObra titulo="Abrir chamado" />} />
+          <Route path="/chamados/:id" element={<EmObra titulo="Detalhe do chamado" />} />
+          <Route path="/sobre" element={<EmObra titulo="Sobre" />} />
+          <Route path="/faq" element={<EmObra titulo="FAQ" />} />
+          <Route path="/integrantes" element={<EmObra titulo="Integrantes" />} />
+          <Route path="/integrantes/:rm" element={<EmObra titulo="Perfil" />} />
+          <Route path="/contato" element={<EmObra titulo="Contato" />} />
+          <Route path="*" element={<NaoEncontrada />} />
+        </Routes>
+      </main>
+    </div>
   )
 }
