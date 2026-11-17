@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Rodape from './components/Rodape'
+import Home from './pages/Home'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -28,7 +29,7 @@ export default function App() {
 
       <main id="conteudo" className="flex-1">
         <Routes>
-          <Route path="/" element={<EmObra titulo="Início" />} />
+          <Route path="/" element={<Home />} />
           <Route path="/chamados" element={<EmObra titulo="Chamados" />} />
           <Route path="/chamados/novo" element={<EmObra titulo="Abrir chamado" />} />
           <Route path="/chamados/:id" element={<EmObra titulo="Detalhe do chamado" />} />
