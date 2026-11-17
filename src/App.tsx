@@ -3,6 +3,8 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Rodape from './components/Rodape'
 import Home from './pages/Home'
+import Integrantes from './pages/Integrantes'
+import PerfilIntegrante from './pages/PerfilIntegrante'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -35,8 +37,8 @@ export default function App() {
           <Route path="/chamados/:id" element={<EmObra titulo="Detalhe do chamado" />} />
           <Route path="/sobre" element={<EmObra titulo="Sobre" />} />
           <Route path="/faq" element={<EmObra titulo="FAQ" />} />
-          <Route path="/integrantes" element={<EmObra titulo="Integrantes" />} />
-          <Route path="/integrantes/:rm" element={<EmObra titulo="Perfil" />} />
+          <Route path="/integrantes" element={<Integrantes />} />
+          <Route path="/integrantes/:rm" element={<PerfilIntegrante />} />
           <Route path="/contato" element={<EmObra titulo="Contato" />} />
           <Route path="*" element={<NaoEncontrada />} />
         </Routes>
