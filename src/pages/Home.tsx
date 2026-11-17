@@ -1,11 +1,13 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useRef, useState, type CSSProperties, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import Letreiro from '../components/Letreiro'
 import Garoa from '../components/Garoa'
+import MapaCalor from '../components/MapaCalor'
 import CaminhoLuz, { type Parada } from '../components/CaminhoLuz'
-import { CHAMADOS_RECENTES } from '../services/dadosExemplo'
+import { useRevelar } from '../hooks/useRevelar'
+import { CHAMADOS_RECENTES, TEMPO_POR_ZONA } from '../services/dadosExemplo'
 import { CATEGORIAS } from '../services/categorias'
 import type { CategoriaId } from '../types/chamado'
 
@@ -170,12 +172,69 @@ function Caminho() {
   )
 }
 
+function Espera() {
+  const maximo = Math.max(...TEMPO_POR_ZONA.map((z) => z.dias))
+
+  // Cor da barra conforme a espera
+  const corDa = (dias: number) =>
+    dias >= 10.5
+      ? 'bg-[linear-gradient(90deg,#FF7A1A,#FF9A3C)] shadow-[0_0_16px_rgba(255,122,26,.55)]'
+      : dias >= 9
+        ? 'bg-ambar/80'
+        : 'bg-verde/75'
+
+  return (
+    <section className="relative isolate overflow-hidden border-t border-borda bg-noite-2">
+      <MapaCalor className="-z-10" />
+      <div className="mx-auto grid max-w-[1320px] gap-12 px-5 py-24 sm:px-8 md:py-32 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+        <div>
+          <h2 className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">Na periferia, a espera é maior</h2>
+          <p className="mt-6 max-w-[46ch] text-mudo">
+            O Zela agrupa os chamados por zona de atendimento e mostra onde a cidade demora mais.
+            No protótipo, os bairros do extremo esperam perto de <strong className="numeros text-papel">11 dias</strong>;
+            os centrais, <strong className="numeros text-papel">8</strong>.
+          </p>
+          <p className="mt-8 text-[13px] text-mudo">Tempo médio de resolução por zona. Dados simulados do protótipo.</p>
+        </div>
+
+        <figure data-revela className="rounded-3xl border border-borda bg-noite-2/85 p-6 sm:p-8">
+          <figcaption className="sr-only">Tempo médio de resolução, em dias, por zona</figcaption>
+          <ul className="space-y-5">
+            {TEMPO_POR_ZONA.map((z, i) => (
+              <li
+                key={z.zona}
+                className="grid grid-cols-[6.5rem_1fr_3.25rem] items-center gap-4 text-[14px] sm:grid-cols-[10rem_1fr_3.5rem]"
+              >
+                <span className="leading-tight font-medium">{z.bairro}</span>
+                <span className="h-2 rounded-full bg-noite-3">
+                  <span
+                    className={`barra block h-full origin-left rounded-full ${corDa(z.dias)}`}
+                    style={{ width: `${(z.dias / maximo) * 100}%`, '--atraso': `${i * 70}ms` } as CSSProperties}
+                  />
+                </span>
+                <span className="numeros text-right font-semibold">{z.dias.toFixed(1).replace('.', ',')} d</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-mudo">
+            <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-sodio" />Crítica</span>
+            <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-ambar/80" />Média</span>
+            <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-verde/75" />Dentro do prazo</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
+  useRevelar()
   return (
     <>
       <Hero />
       <Letreiro chamados={CHAMADOS_RECENTES} />
       <Caminho />
+      <Espera />
     </>
   )
 }
