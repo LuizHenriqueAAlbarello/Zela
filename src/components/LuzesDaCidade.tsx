@@ -22,13 +22,14 @@ interface Luz {
   sodio: boolean
 }
 
-/** Uma avenida vista do alto: uma reta de (x1, y1) até (x2, y2). */
+/** Uma rua vista do alto: uma reta de (x1, y1) até (x2, y2). Avenidas são mais largas e rápidas. */
 interface Rua {
   x1: number
   y1: number
   x2: number
   y2: number
   comprimento: number
+  avenida: boolean
 }
 
 /** Um carro andando numa rua. "posicao" vai de 0 (início da rua) a 1 (fim). */
@@ -116,27 +117,41 @@ function criarCena(
     preparar(largura, altura, reduzido) {
       const sorteio = criarSorteio(42)
 
-      // Ruas: retas longas que cruzam o quadro, como avenidas vistas do alto
+      // Ruas: uma malha de quarteirões levemente torta, como uma cidade vista do alto
       ruas = []
-      for (let i = 0; i < 9; i++) {
-        const horizontal = i % 2 === 0
-        const desvio = (sorteio() - 0.5) * 0.5
-        const base = (i + 0.5) / 9
-        const x1 = horizontal ? -40 : largura * (base + desvio * 0.3)
-        const y1 = horizontal ? altura * (base + desvio * 0.2) : -40
-        const x2 = horizontal ? largura + 40 : x1 + (sorteio() - 0.5) * largura * 0.6
-        const y2 = horizontal ? y1 + (sorteio() - 0.5) * altura * 0.5 : altura + 40
-        ruas.push({ x1, y1, x2, y2, comprimento: Math.hypot(x2 - x1, y2 - y1) })
-      }
+      const novaRua = (x1: number, y1: number, x2: number, y2: number, avenida: boolean) =>
+        ruas.push({ x1, y1, x2, y2, comprimento: Math.hypot(x2 - x1, y2 - y1), avenida })
 
-      // Carros: faróis brancos, luzes de sódio e lanternas vermelhas
-      carros = Array.from({ length: Math.round(largura / 34) }, () => ({
-        rua: Math.floor(sorteio() * ruas.length),
-        posicao: sorteio(),
-        velocidade: 40 + sorteio() * 70,
-        cor: sorteio() < 0.55 ? '255,236,210' : sorteio() < 0.7 ? COR_SODIO : '255,90,70',
-        ida: sorteio() < 0.5,
-      }))
+      // Ruas "horizontais": a cada 70 a 120px, com uma leve inclinação
+      for (let y = 30 + sorteio() * 40; y < altura + 40; y += 70 + sorteio() * 50) {
+        const inclinacao = (sorteio() - 0.5) * 60
+        novaRua(-40, y, largura + 40, y + inclinacao, false)
+      }
+      // Ruas "verticais": a cada 90 a 150px
+      for (let x = 20 + sorteio() * 60; x < largura + 40; x += 90 + sorteio() * 60) {
+        const inclinacao = (sorteio() - 0.5) * 80
+        novaRua(x, -40, x + inclinacao, altura + 40, false)
+      }
+      // Duas avenidas em diagonal cortando a malha
+      novaRua(-40, altura * 0.95, largura + 40, altura * 0.62, true)
+      novaRua(largura * 0.15, -40, largura * 0.7, altura + 40, true)
+
+      // Carros: faróis brancos, lanternas vermelhas e alguns táxis laranja.
+      // Avenidas têm mais carros e mais rápidos.
+      carros = []
+      ruas.forEach((rua, indice) => {
+        const quantos = rua.avenida ? Math.round(rua.comprimento / 60) : Math.round(rua.comprimento / 260)
+        for (let i = 0; i < quantos; i++) {
+          const tipo = sorteio()
+          carros.push({
+            rua: indice,
+            posicao: sorteio(),
+            velocidade: (rua.avenida ? 70 : 30) + sorteio() * (rua.avenida ? 60 : 40),
+            cor: tipo < 0.5 ? '255,236,210' : tipo < 0.85 ? '255,80,64' : COR_SODIO,
+            ida: sorteio() < 0.5,
+          })
+        }
+      })
 
       // Onde a palavra fica: a posição do "palco" em relação ao canvas
       const caixaCanvas = canvasRef.current!.getBoundingClientRect()
@@ -172,7 +187,7 @@ function criarCena(
       })
 
       // Luzes soltas: janelas acesas espalhadas pela cidade (ficam paradas)
-      for (let i = 0; i < Math.round((largura * altura) / 4200); i++) {
+      for (let i = 0; i < Math.round((largura * altura) / 9000); i++) {
         const x = sorteio() * largura
         const y = sorteio() * altura
         luzes.push({
@@ -189,15 +204,15 @@ function criarCena(
       ctx.fillStyle = '#07080C'
       ctx.fillRect(0, 0, largura, altura)
 
-      // Ruas
-      ctx.lineWidth = 1
-      ctx.strokeStyle = 'rgba(70,78,96,.28)'
-      ctx.beginPath()
+      // Ruas: o asfalto em cinza bem escuro; avenidas mais largas
       for (const rua of ruas) {
+        ctx.lineWidth = rua.avenida ? 7 : 3
+        ctx.strokeStyle = rua.avenida ? 'rgba(52,58,74,.42)' : 'rgba(46,52,66,.32)'
+        ctx.beginPath()
         ctx.moveTo(rua.x1, rua.y1)
         ctx.lineTo(rua.x2, rua.y2)
+        ctx.stroke()
       }
-      ctx.stroke()
 
       // Carros correndo pelas ruas, com rastro de luz
       for (const carro of carros) {
@@ -208,12 +223,15 @@ function criarCena(
 
         const dirX = (rua.x2 - rua.x1) / rua.comprimento
         const dirY = (rua.y2 - rua.y1) / rua.comprimento
-        const x = rua.x1 + (rua.x2 - rua.x1) * carro.posicao
-        const y = rua.y1 + (rua.y2 - rua.y1) * carro.posicao
-        const rastro = carro.ida ? -26 : 26
+        // Mão dupla: cada sentido anda de um lado da rua
+        const faixa = (carro.ida ? 1 : -1) * (rua.avenida ? 2 : 0.8)
+        const x = rua.x1 + (rua.x2 - rua.x1) * carro.posicao - dirY * faixa
+        const y = rua.y1 + (rua.y2 - rua.y1) * carro.posicao + dirX * faixa
+        const rastro = (carro.ida ? -1 : 1) * (rua.avenida ? 34 : 20)
 
+        // Rastro de luz atrás do carro
         const brilho = ctx.createLinearGradient(x, y, x + dirX * rastro, y + dirY * rastro)
-        brilho.addColorStop(0, `rgba(${carro.cor},.9)`)
+        brilho.addColorStop(0, `rgba(${carro.cor},.75)`)
         brilho.addColorStop(1, `rgba(${carro.cor},0)`)
         ctx.strokeStyle = brilho
         ctx.lineWidth = 1.6
@@ -221,6 +239,12 @@ function criarCena(
         ctx.moveTo(x, y)
         ctx.lineTo(x + dirX * rastro, y + dirY * rastro)
         ctx.stroke()
+
+        // O carro: um ponto de luz na frente do rastro
+        ctx.fillStyle = `rgba(${carro.cor},1)`
+        ctx.beginPath()
+        ctx.arc(x, y, 1.6, 0, Math.PI * 2)
+        ctx.fill()
       }
 
       // Luzes: uma "mola" puxa cada uma para o alvo; o ponteiro empurra para longe
