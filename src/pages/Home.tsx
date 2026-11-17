@@ -4,9 +4,18 @@ import { ArrowRight } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import Letreiro from '../components/Letreiro'
 import Garoa from '../components/Garoa'
+import CaminhoLuz, { type Parada } from '../components/CaminhoLuz'
 import { CHAMADOS_RECENTES } from '../services/dadosExemplo'
 import { CATEGORIAS } from '../services/categorias'
 import type { CategoriaId } from '../types/chamado'
+
+/** As quatro etapas que todo chamado percorre. */
+const CAMINHO: Parada[] = [
+  { status: 'ABERTO', quem: 'Você registra', texto: 'Categoria, endereço e uma foto. Leva menos de um minuto e o protocolo sai na hora.' },
+  { status: 'EM_ANALISE', quem: 'A IA prioriza', texto: 'Prevê o prazo e o risco de atraso. Quanto mais vizinhos apoiam, mais o chamado sobe na fila.' },
+  { status: 'EM_EXECUCAO', quem: 'A equipe vai', texto: 'A subprefeitura manda a equipe e registra cada etapa no histórico.' },
+  { status: 'RESOLVIDO', quem: 'Você avalia', texto: 'Com o serviço feito, você dá uma nota de 1 a 5 para o atendimento.' },
+]
 
 /** Erros possíveis do mini formulário (um por campo). */
 interface ErrosMini {
@@ -153,7 +162,9 @@ function Caminho() {
             e você sempre sabe onde o seu parou, mesmo debaixo de garoa.
           </p>
         </div>
-        {/* Os postes do caminho entram na próxima etapa */}
+        <div className="mt-16 md:mt-24">
+          <CaminhoLuz paradas={CAMINHO} />
+        </div>
       </div>
     </section>
   )
