@@ -7,6 +7,7 @@ import Garoa from '../components/Garoa'
 import MapaCalor from '../components/MapaCalor'
 import CaminhoLuz, { type Parada } from '../components/CaminhoLuz'
 import SeloStatus from '../components/SeloStatus'
+import CategoriaIcone from '../components/CategoriaIcone'
 import BotaoLink from '../components/Botao'
 import { useRevelar } from '../hooks/useRevelar'
 import { CHAMADOS_RECENTES, TEMPO_POR_ZONA } from '../services/dadosExemplo'
@@ -284,6 +285,38 @@ function Apoio() {
   )
 }
 
+function Categorias() {
+  return (
+    <section className="border-t border-borda bg-noite-2">
+      <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+        <h2 className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">O que dá pra registrar</h2>
+        <ul className="mt-14 flex flex-wrap justify-center gap-x-4 gap-y-10">
+          {CATEGORIAS.map((c) => (
+            // 2 por linha no celular, 4 no tablet e as 7 numa linha só no desktop
+            <li key={c.id} className="w-[calc(50%-8px)] sm:w-[calc(25%-12px)] lg:w-[calc((100%-96px)/7)]">
+              <Link
+                to={`/chamados/novo?categoria=${c.id}`}
+                className="group flex flex-col items-center gap-4 rounded-2xl py-2 text-center text-papel no-underline"
+              >
+                {/* O círculo "acende" como um poste quando o mouse passa */}
+                <span className="grid size-20 place-items-center rounded-full border border-borda bg-noite text-mudo transition-[color,border-color,box-shadow,background-color] duration-300 group-hover:border-sodio group-hover:bg-sodio/10 group-hover:text-sodio group-hover:shadow-[0_0_36px_-4px_rgba(255,154,60,.55)] group-focus-visible:border-sodio group-focus-visible:text-sodio">
+                  <CategoriaIcone categoria={c.id} className="size-8" />
+                </span>
+                <span className="text-[15px] leading-snug font-semibold">
+                  {c.nome}
+                  <span className="mt-0.5 block text-[13px] font-normal text-mudo">
+                    prazo: até <span className="numeros">{c.prazoDias}</span> dias
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   useRevelar()
   return (
@@ -293,6 +326,7 @@ export default function Home() {
       <Caminho />
       <Espera />
       <Apoio />
+      <Categorias />
     </>
   )
 }
