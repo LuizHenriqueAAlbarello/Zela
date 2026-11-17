@@ -2,6 +2,8 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
+import Letreiro from '../components/Letreiro'
+import { CHAMADOS_RECENTES } from '../services/dadosExemplo'
 import { CATEGORIAS } from '../services/categorias'
 import type { CategoriaId } from '../types/chamado'
 
@@ -142,6 +144,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <Letreiro chamados={CHAMADOS_RECENTES} />
     </>
   )
 }
