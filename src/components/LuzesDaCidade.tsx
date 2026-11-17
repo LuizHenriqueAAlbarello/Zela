@@ -224,14 +224,15 @@ function criarCena(
       }
 
       // Luzes: uma "mola" puxa cada uma para o alvo; o ponteiro empurra para longe
-      const raio = largura < 640 ? 60 : 110
+      // raio: a partir de quantos pixels o mouse espanta | forca: o tamanho do empurrão
+      const raio = largura < 640 ? 80 : 150
       for (const luz of luzes) {
         const dx = luz.x - ponteiro.x
         const dy = luz.y - ponteiro.y
         const dist2 = dx * dx + dy * dy
         if (dist2 < raio * raio && dist2 > 0.01) {
           const dist = Math.sqrt(dist2)
-          const forca = (1 - dist / raio) * 2.4
+          const forca = (1 - dist / raio) * 3.6
           luz.vx += (dx / dist) * forca
           luz.vy += (dy / dist) * forca
         }
