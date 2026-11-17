@@ -7,9 +7,9 @@ export const INTEGRANTES: Integrante[] = [
     rm: '572727',
     nome: 'Luiz Henrique Alves Albarello',
     turma: '1TDSPF',
-    foto: '',
-    github: '',
-    linkedin: '',
+    foto: '/integrantes/rm572727.jpg',
+    github: 'https://github.com/LuizHenriqueAAlbarello',
+    linkedin: 'https://www.linkedin.com/in/luiz-henrique-alves-albarello-82297b410/',
   },
   {
     rm: '570469',
@@ -37,12 +37,12 @@ export const INTEGRANTES: Integrante[] = [
   },
 ]
 
-/** Procura um integrante pelo RM. Devolve undefined se o RM não existir. */
+
 export function buscarIntegrante(rm: string): Integrante | undefined {
   return INTEGRANTES.find((i) => i.rm === rm)
 }
 
-/** "Luiz Henrique Alves Albarello" vira "LA" (primeiro e último nome). */
+
 export function iniciais(nome: string): string {
   const partes = nome.trim().split(/\s+/)
   const primeira = partes[0]?.[0] ?? ''
@@ -50,7 +50,7 @@ export function iniciais(nome: string): string {
   return (primeira + ultima).toUpperCase()
 }
 
-/** "Luiz Henrique Alves Albarello" vira "Luiz". */
+
 export function primeiroNome(nome: string): string {
   return nome.trim().split(/\s+/)[0] ?? nome
 }
