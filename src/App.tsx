@@ -1,9 +1,9 @@
+import Marca from './components/Marca'
+
 export default function App() {
   return (
-    <main className="grid min-h-dvh place-items-center p-8">
-      <h1 className="titulo text-6xl">
-        Zela <span className="text-sodio">no ar.</span>
-      </h1>
+    <main className="grid min-h-dvh place-items-center gap-6 p-8">
+      <Marca />
     </main>
   )
 }
