@@ -26,8 +26,12 @@ export default function Faq() {
       </section>
 
       {/* As perguntas, uma embaixo da outra, abrindo e fechando */}
-      <section aria-label="Perguntas e respostas" className="border-t border-borda bg-noite-2">
+      <section aria-labelledby="titulo-perguntas" className="border-t border-borda bg-noite-2">
         <div className="mx-auto max-w-[1320px] px-5 py-16 sm:px-8 md:py-24">
+          {/* Título só para leitores de tela: mantém a ordem h1 > h2 > h3 (as perguntas são h3) */}
+          <h2 id="titulo-perguntas" className="sr-only">
+            Perguntas e respostas
+          </h2>
           <div className="max-w-[900px]">
             <Acordeao itens={PERGUNTAS_FAQ} />
           </div>
