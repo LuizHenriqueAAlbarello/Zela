@@ -1,6 +1,26 @@
 import { useRef } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 
+/** Um número de destaque com a explicação e a fonte de onde ele veio. */
+interface Numero {
+  valor: string
+  descricao: string
+  fonte: string
+}
+
+const NUMEROS: Numero[] = [
+  {
+    valor: '157 mil',
+    descricao: 'solicitações por mês chegam, em média, ao SP156, o canal de atendimento da cidade.',
+    fonte: 'Prefeitura de São Paulo, 2022',
+  },
+  {
+    valor: '14%',
+    descricao: 'dos pedidos do 1º semestre de 2019 foram de reparo de asfalto, o assunto mais pedido.',
+    fonte: 'Câmara Municipal de São Paulo, 2019',
+  },
+]
+
 /** Página Sobre: por que o Zela existe, para quem ele é e com o que foi feito. */
 export default function Sobre() {
   const palco = useRef<HTMLDivElement>(null)
@@ -46,6 +66,17 @@ export default function Sobre() {
               </p>
             </div>
           </div>
+
+          {/* Os números que mostram o tamanho do problema, com a fonte de cada um */}
+          <ul className="mt-16 grid gap-10 border-t border-borda pt-10 sm:grid-cols-2 sm:gap-8 md:mt-20">
+            {NUMEROS.map((item) => (
+              <li key={item.valor}>
+                <p className="titulo numeros text-[clamp(3rem,8vw,5.5rem)] text-sodio">{item.valor}</p>
+                <p className="mt-4 max-w-[40ch] text-papel">{item.descricao}</p>
+                <p className="mt-2 text-sm text-mudo">Fonte: {item.fonte}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </>
