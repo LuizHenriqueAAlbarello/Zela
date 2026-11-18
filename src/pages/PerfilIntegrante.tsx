@@ -32,8 +32,9 @@ export default function PerfilIntegrante() {
   return (
     <>
       <section className="relative isolate overflow-hidden">
-        {/* As luzes da cidade escrevem o primeiro nome da pessoa */}
-        <LuzesDaCidade palavra={primeiroNome(integrante.nome).toUpperCase()} palcoRef={palco} className="-z-10 opacity-60" />
+        {/* As luzes da cidade escrevem o primeiro nome da pessoa.
+            A key faz o React montar uma animação nova ao trocar de integrante. */}
+        <LuzesDaCidade key={integrante.rm} palavra={primeiroNome(integrante.nome).toUpperCase()} palcoRef={palco} className="-z-10 opacity-60" />
 
         <div className="mx-auto max-w-[1320px] px-5 pt-10 pb-20 sm:px-8 md:pb-28">
           <Link
