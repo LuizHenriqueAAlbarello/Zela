@@ -1,14 +1,16 @@
 import { useRef, useState, type FormEvent } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
-import type { DadosContato } from '../types/contato'
+import type { AssuntoContato, DadosContato } from '../types/contato'
+import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM } from '../services/contato'
 
 /** Formulário vazio: estado inicial e o que volta depois de limpar. */
 const VAZIO: DadosContato = { nome: '', email: '', assunto: '', mensagem: '' }
 
 /** Classes do campo de formulário (padrão do design system no CLAUDE.md). */
-const CAMPO =
-  'h-12 w-full rounded-xl border border-borda bg-noite px-3.5 text-base text-papel transition-colors ' +
+const CAMPO_BASE =
+  'w-full rounded-xl border border-borda bg-noite px-3.5 text-base text-papel transition-colors ' +
   'hover:border-[#3a4050] focus-visible:border-sodio focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sodio/40'
+const CAMPO = `${CAMPO_BASE} h-12`
 
 const ROTULO = 'mb-1.5 block text-[13px] font-semibold text-mudo'
 
@@ -86,6 +88,47 @@ export default function Contato() {
                   onChange={(e) => atualizar('email', e.target.value)}
                   className={CAMPO}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="assunto" className={ROTULO}>
+                  Assunto
+                </label>
+                {/* [color-scheme:dark] deixa a lista de opções do navegador escura, combinando com o site */}
+                <select
+                  id="assunto"
+                  name="assunto"
+                  value={dados.assunto}
+                  onChange={(e) => atualizar('assunto', e.target.value as AssuntoContato | '')}
+                  className={`${CAMPO} [color-scheme:dark]`}
+                >
+                  <option value="">Escolha um assunto</option>
+                  {ASSUNTOS_CONTATO.map((assunto) => (
+                    <option key={assunto.valor} value={assunto.valor}>
+                      {assunto.rotulo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="mensagem" className={ROTULO}>
+                  Mensagem
+                </label>
+                <textarea
+                  id="mensagem"
+                  name="mensagem"
+                  rows={6}
+                  value={dados.mensagem}
+                  onChange={(e) => atualizar('mensagem', e.target.value)}
+                  aria-describedby="mensagem-contador"
+                  className={`${CAMPO_BASE} min-h-40 resize-y py-3`}
+                />
+                {/* Contador: mostra quantos caracteres já foram digitados e qual é o mínimo */}
+                <p id="mensagem-contador" className="mt-1.5 text-sm text-mudo">
+                  <span className="numeros">{dados.mensagem.trim().length}</span> caracteres · mínimo{' '}
+                  <span className="numeros">{MINIMO_MENSAGEM}</span>
+                </p>
               </div>
 
               <button
