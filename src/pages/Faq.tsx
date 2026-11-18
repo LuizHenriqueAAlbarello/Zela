@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
+import Acordeao from '../components/Acordeao'
+import { PERGUNTAS_FAQ } from '../services/faq'
 
 /** Página FAQ: as dúvidas mais comuns sobre o Zela. */
 export default function Faq() {
@@ -19,6 +21,15 @@ export default function Faq() {
             <p className="animate-chegar text-mudo [animation-delay:120ms]">
               Como abrir um chamado, o que é apoiar, como a prioridade é calculada e o que fazer numa emergência.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* As perguntas, uma embaixo da outra, abrindo e fechando */}
+      <section aria-label="Perguntas e respostas" className="border-t border-borda bg-noite-2">
+        <div className="mx-auto max-w-[1320px] px-5 py-16 sm:px-8 md:py-24">
+          <div className="max-w-[900px]">
+            <Acordeao itens={PERGUNTAS_FAQ} />
           </div>
         </div>
       </section>
