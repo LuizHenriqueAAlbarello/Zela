@@ -112,7 +112,8 @@ export default function Contato() {
 
       {/* Formulário de contato */}
       <section aria-labelledby="titulo-formulario" className="border-t border-borda bg-noite-2">
-        <div className="mx-auto grid max-w-[1320px] gap-14 px-5 py-16 sm:px-8 md:py-24">
+        {/* Celular e tablet: formulário em cima e canais embaixo. Desktop: lado a lado */}
+        <div className="mx-auto grid max-w-[1320px] gap-14 px-5 py-16 sm:px-8 md:py-24 lg:grid-cols-[minmax(0,640px)_minmax(0,1fr)] lg:gap-20">
           <div className="max-w-[640px]">
             <h2 id="titulo-formulario" className="titulo text-[22px] sm:text-[26px]">
               Envie sua mensagem
@@ -265,7 +266,10 @@ export default function Contato() {
           </div>
 
           {/* Outros canais e o lembrete de emergência */}
-          <aside aria-labelledby="titulo-canais" className="max-w-[640px]">
+          <aside
+            aria-labelledby="titulo-canais"
+            className="max-w-[640px] lg:max-w-[420px] lg:border-l lg:border-borda lg:pl-12"
+          >
             <h2 id="titulo-canais" className="titulo text-[22px] sm:text-[26px]">
               Outros canais
             </h2>
