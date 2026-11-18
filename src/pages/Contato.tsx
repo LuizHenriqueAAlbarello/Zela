@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
-import type { AssuntoContato, DadosContato } from '../types/contato'
-import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM } from '../services/contato'
+import type { AssuntoContato, DadosContato, ErrosContato } from '../types/contato'
+import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM, validarContato } from '../services/contato'
 
 /** Formulário vazio: estado inicial e o que volta depois de limpar. */
 const VAZIO: DadosContato = { nome: '', email: '', assunto: '', mensagem: '' }
@@ -13,21 +13,27 @@ const CAMPO_BASE =
 const CAMPO = `${CAMPO_BASE} h-12`
 
 const ROTULO = 'mb-1.5 block text-[13px] font-semibold text-mudo'
+const ERRO = 'mt-1.5 text-sm font-semibold text-erro'
 
 /** Página Contato: formulário para falar com a equipe do Zela. */
 export default function Contato() {
   const palco = useRef<HTMLDivElement>(null)
   // Formulário controlado: o React guarda o valor de cada campo
   const [dados, setDados] = useState<DadosContato>(VAZIO)
+  // Mensagem de erro de cada campo; só aparece depois de tentar enviar
+  const [erros, setErros] = useState<ErrosContato>({})
 
-  /** Atualiza um campo só, mantendo os outros como estão. */
+  /** Atualiza um campo só, mantendo os outros como estão, e apaga o erro dele enquanto a pessoa corrige. */
   function atualizar<Campo extends keyof DadosContato>(campo: Campo, valor: DadosContato[Campo]) {
     setDados((atual) => ({ ...atual, [campo]: valor }))
+    setErros((atual) => ({ ...atual, [campo]: undefined }))
   }
 
   function enviar(evento: FormEvent<HTMLFormElement>) {
     // Impede o navegador de recarregar a página ao enviar o formulário
     evento.preventDefault()
+    // Valida antes de enviar: cada campo com problema ganha a sua mensagem
+    setErros(validarContato(dados))
   }
 
   return (
@@ -70,8 +76,15 @@ export default function Contato() {
                   autoComplete="name"
                   value={dados.nome}
                   onChange={(e) => atualizar('nome', e.target.value)}
-                  className={CAMPO}
+                  aria-invalid={Boolean(erros.nome)}
+                  aria-describedby={erros.nome ? 'nome-erro' : undefined}
+                  className={`${CAMPO} ${erros.nome ? 'border-erro' : ''}`}
                 />
+                {erros.nome && (
+                  <p id="nome-erro" role="alert" className={ERRO}>
+                    {erros.nome}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -86,8 +99,15 @@ export default function Contato() {
                   autoComplete="email"
                   value={dados.email}
                   onChange={(e) => atualizar('email', e.target.value)}
-                  className={CAMPO}
+                  aria-invalid={Boolean(erros.email)}
+                  aria-describedby={erros.email ? 'email-erro' : undefined}
+                  className={`${CAMPO} ${erros.email ? 'border-erro' : ''}`}
                 />
+                {erros.email && (
+                  <p id="email-erro" role="alert" className={ERRO}>
+                    {erros.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -100,7 +120,9 @@ export default function Contato() {
                   name="assunto"
                   value={dados.assunto}
                   onChange={(e) => atualizar('assunto', e.target.value as AssuntoContato | '')}
-                  className={`${CAMPO} [color-scheme:dark]`}
+                  aria-invalid={Boolean(erros.assunto)}
+                  aria-describedby={erros.assunto ? 'assunto-erro' : undefined}
+                  className={`${CAMPO} [color-scheme:dark] ${erros.assunto ? 'border-erro' : ''}`}
                 >
                   <option value="">Escolha um assunto</option>
                   {ASSUNTOS_CONTATO.map((assunto) => (
@@ -109,6 +131,11 @@ export default function Contato() {
                     </option>
                   ))}
                 </select>
+                {erros.assunto && (
+                  <p id="assunto-erro" role="alert" className={ERRO}>
+                    {erros.assunto}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -121,14 +148,20 @@ export default function Contato() {
                   rows={6}
                   value={dados.mensagem}
                   onChange={(e) => atualizar('mensagem', e.target.value)}
-                  aria-describedby="mensagem-contador"
-                  className={`${CAMPO_BASE} min-h-40 resize-y py-3`}
+                  aria-invalid={Boolean(erros.mensagem)}
+                  aria-describedby={erros.mensagem ? 'mensagem-contador mensagem-erro' : 'mensagem-contador'}
+                  className={`${CAMPO_BASE} min-h-40 resize-y py-3 ${erros.mensagem ? 'border-erro' : ''}`}
                 />
                 {/* Contador: mostra quantos caracteres já foram digitados e qual é o mínimo */}
                 <p id="mensagem-contador" className="mt-1.5 text-sm text-mudo">
                   <span className="numeros">{dados.mensagem.trim().length}</span> caracteres · mínimo{' '}
                   <span className="numeros">{MINIMO_MENSAGEM}</span>
                 </p>
+                {erros.mensagem && (
+                  <p id="mensagem-erro" role="alert" className={ERRO}>
+                    {erros.mensagem}
+                  </p>
+                )}
               </div>
 
               <button
