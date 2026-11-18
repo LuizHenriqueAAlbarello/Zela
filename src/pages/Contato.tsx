@@ -131,7 +131,7 @@ export default function Contato() {
                 <h3 className="titulo mt-5 text-[22px] sm:text-[26px]">Mensagem recebida</h3>
                 <p className="mt-3 text-mudo">
                   Obrigado, {primeiroNome(dados.nome)}. Respondemos em até 2 dias úteis no e-mail{' '}
-                  <span className="break-all text-papel">{dados.email.trim()}</span>.
+                  <span className="[overflow-wrap:anywhere] text-papel">{dados.email.trim()}</span>.
                 </p>
                 <button
                   type="button"
@@ -277,7 +277,7 @@ export default function Contato() {
               {EMAIL_EQUIPE && (
                 <li>
                   <p className="text-[13px] font-semibold text-mudo">E-mail da equipe</p>
-                  <a href={`mailto:${EMAIL_EQUIPE}`} className={`${LINK} break-all`}>
+                  <a href={`mailto:${EMAIL_EQUIPE}`} className={`${LINK} [overflow-wrap:anywhere]`}>
                     {EMAIL_EQUIPE}
                   </a>
                 </li>
