@@ -244,3 +244,44 @@ function criarCena(
 
         // O carro: um ponto de luz na frente do rastro
         ctx.fillStyle = `rgba(${carro.cor},1)`
+        ctx.beginPath()
+        ctx.arc(x, y, 1.6, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      // Luzes: uma "mola" puxa cada uma para o alvo; o ponteiro empurra para longe
+      // raio: a partir de quantos pixels o mouse espanta | forca: o tamanho do empurrão
+      const raio = largura < 640 ? 80 : 150
+      for (const luz of luzes) {
+        const dx = luz.x - ponteiro.x
+        const dy = luz.y - ponteiro.y
+        const dist2 = dx * dx + dy * dy
+        if (dist2 < raio * raio && dist2 > 0.01) {
+          const dist = Math.sqrt(dist2)
+          const forca = (1 - dist / raio) * 3.6
+          luz.vx += (dx / dist) * forca
+          luz.vy += (dy / dist) * forca
+        }
+        luz.vx = luz.vx * 0.86 + (luz.alvoX - luz.x) * 0.018
+        luz.vy = luz.vy * 0.86 + (luz.alvoY - luz.y) * 0.018
+        luz.x += luz.vx
+        luz.y += luz.vy
+
+        // Cintilar: cada luz pisca no seu próprio ritmo
+        const cintilar = 0.55 + 0.45 * Math.sin(t * 1.6 + luz.fase)
+        ctx.fillStyle = `rgba(${luz.sodio ? COR_SODIO : COR_LUZ},${(0.5 + cintilar * 0.5).toFixed(2)})`
+        ctx.fillRect(luz.x, luz.y, luz.tamanho, luz.tamanho)
+      }
+    },
+  }
+}
+
+/**
+ * Fundo animado: São Paulo à noite vista do alto. As luzes da cidade se juntam
+ * para escrever uma palavra e se espalham quando o ponteiro passa.
+ */
+export default function LuzesDaCidade({ palavra, palcoRef, className = '' }: LuzesDaCidadeProps) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  useCanvasAnimado(ref, () => criarCena(palavra, palcoRef, ref))
+  return <canvas ref={ref} aria-hidden="true" className={`absolute inset-0 size-full ${className}`} />
+}
