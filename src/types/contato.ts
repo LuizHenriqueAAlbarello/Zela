@@ -12,3 +12,6 @@ export interface DadosContato {
 
 /** Mensagem de erro de cada campo. Campo sem erro não aparece no objeto. */
 export type ErrosContato = Partial<Record<keyof DadosContato, string>>
+
+/** Em que ponto está o envio: preenchendo o formulário, esperando o envio ou já enviado. */
+export type EstadoEnvio = 'preenchendo' | 'enviando' | 'enviado'

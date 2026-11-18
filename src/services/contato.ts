@@ -54,3 +54,17 @@ export function validarContato(dados: DadosContato): ErrosContato {
 
   return erros
 }
+
+/** Tempo da simulação de envio, em milissegundos. */
+const TEMPO_ENVIO = 800
+
+/**
+ * Envia a mensagem de contato.
+ * O contato do Zela é só front-end: não existe rota de contato na API Java (a integração obrigatória
+ * com a API está nas telas de chamados). Por isso o envio é simulado com uma espera curta.
+ */
+export function enviarContato(dados: DadosContato): Promise<DadosContato> {
+  return new Promise((resolver) => {
+    setTimeout(() => resolver(dados), TEMPO_ENVIO)
+  })
+}

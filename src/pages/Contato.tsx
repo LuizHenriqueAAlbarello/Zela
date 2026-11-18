@@ -1,7 +1,8 @@
 import { useRef, useState, type FormEvent } from 'react'
+import { LoaderCircle } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
-import type { AssuntoContato, DadosContato, ErrosContato } from '../types/contato'
-import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM, validarContato } from '../services/contato'
+import type { AssuntoContato, DadosContato, ErrosContato, EstadoEnvio } from '../types/contato'
+import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM, enviarContato, validarContato } from '../services/contato'
 
 /** Formulário vazio: estado inicial e o que volta depois de limpar. */
 const VAZIO: DadosContato = { nome: '', email: '', assunto: '', mensagem: '' }
@@ -25,6 +26,8 @@ export default function Contato() {
   const [dados, setDados] = useState<DadosContato>(VAZIO)
   // Mensagem de erro de cada campo; só aparece depois de tentar enviar
   const [erros, setErros] = useState<ErrosContato>({})
+  // Controla o botão: "Enviar mensagem" ou "Enviando…"
+  const [estado, setEstado] = useState<EstadoEnvio>('preenchendo')
   // Referência a cada campo, para conseguir mover o foco até ele
   const refNome = useRef<HTMLInputElement>(null)
   const refEmail = useRef<HTMLInputElement>(null)
@@ -43,7 +46,7 @@ export default function Contato() {
     setErros((atual) => ({ ...atual, [campo]: undefined }))
   }
 
-  function enviar(evento: FormEvent<HTMLFormElement>) {
+  async function enviar(evento: FormEvent<HTMLFormElement>) {
     // Impede o navegador de recarregar a página ao enviar o formulário
     evento.preventDefault()
     // Valida antes de enviar: cada campo com problema ganha a sua mensagem
@@ -54,7 +57,14 @@ export default function Contato() {
     const primeiroComErro = ORDEM_CAMPOS.find((campo) => novosErros[campo])
     if (primeiroComErro) {
       focarCampo(primeiroComErro)
+      return
     }
+
+    // Tudo certo: mostra "Enviando…", espera o envio terminar e limpa o formulário
+    setEstado('enviando')
+    await enviarContato(dados)
+    setDados(VAZIO)
+    setEstado('preenchendo')
   }
 
   return (
@@ -85,7 +95,7 @@ export default function Contato() {
             </h2>
 
             {/* noValidate: desliga os balões do navegador, porque a validação é feita pelo nosso código */}
-            <form noValidate onSubmit={enviar} className="mt-8 space-y-6">
+            <form noValidate onSubmit={enviar} aria-busy={estado === 'enviando'} className="mt-8 space-y-6">
               <div>
                 <label htmlFor="nome" className={ROTULO}>
                   Nome
@@ -191,9 +201,17 @@ export default function Contato() {
 
               <button
                 type="submit"
+                disabled={estado === 'enviando'}
                 className="rotulo inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-sodio px-6 text-[14px] text-noite shadow-[0_8px_30px_-8px_rgba(255,154,60,.55)] transition-colors hover:bg-[#ffb066] disabled:opacity-60"
               >
-                Enviar mensagem
+                {estado === 'enviando' ? (
+                  <>
+                    <LoaderCircle aria-hidden="true" strokeWidth={2.4} className="size-4 animate-spin" />
+                    Enviando…
+                  </>
+                ) : (
+                  'Enviar mensagem'
+                )}
               </button>
             </form>
           </div>
