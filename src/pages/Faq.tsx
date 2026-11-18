@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import Acordeao from '../components/Acordeao'
+import BotaoLink from '../components/Botao'
 import { PERGUNTAS_FAQ } from '../services/faq'
 
 /** Página FAQ: as dúvidas mais comuns sobre o Zela. */
@@ -35,6 +36,24 @@ export default function Faq() {
           <div className="max-w-[900px]">
             <Acordeao itens={PERGUNTAS_FAQ} />
           </div>
+        </div>
+      </section>
+
+      {/* Ajuda: para quem não encontrou a resposta na lista */}
+      <section aria-labelledby="titulo-ajuda" className="border-t border-borda">
+        <div className="mx-auto grid max-w-[1320px] gap-8 px-5 py-20 sm:px-8 md:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <h2 id="titulo-ajuda" className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">
+              Não achou sua resposta?
+            </h2>
+            <p className="mt-6 max-w-[50ch] text-mudo">
+              Mande sua dúvida para a equipe. Em emergência, não espere: ligue para a Defesa Civil no{' '}
+              <span className="numeros font-semibold text-papel">199</span>.
+            </p>
+          </div>
+          <BotaoLink para="/contato" className="justify-self-start">
+            Falar com a equipe
+          </BotaoLink>
         </div>
       </section>
     </>
