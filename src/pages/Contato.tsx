@@ -72,6 +72,16 @@ export default function Contato() {
     refSucesso.current?.focus()
   }
 
+  /** Limpa tudo e volta ao formulário, com o cursor no primeiro campo. */
+  function novaMensagem() {
+    flushSync(() => {
+      setDados(VAZIO)
+      setErros({})
+      setEstado('preenchendo')
+    })
+    refNome.current?.focus()
+  }
+
   return (
     <>
       {/* Cabeçalho: as luzes da cidade escrevem "CONTATO" no espaço do palco */}
@@ -113,6 +123,13 @@ export default function Contato() {
                   Obrigado, {primeiroNome(dados.nome)}. Respondemos em até 2 dias úteis no e-mail{' '}
                   <span className="break-all text-papel">{dados.email.trim()}</span>.
                 </p>
+                <button
+                  type="button"
+                  onClick={novaMensagem}
+                  className="rotulo mt-6 inline-flex min-h-12 items-center justify-center rounded-full border border-borda px-6 text-[14px] text-papel transition-colors hover:border-papel"
+                >
+                  Enviar outra mensagem
+                </button>
               </div>
             ) : (
               /* noValidate: desliga os balões do navegador, porque a validação é feita pelo nosso código */
