@@ -21,6 +21,30 @@ const NUMEROS: Numero[] = [
   },
 ]
 
+/** Uma pergunta que a IA do Zela responde sobre cada chamado. */
+interface PerguntaIa {
+  pergunta: string
+  resposta: string
+}
+
+const PERGUNTAS_IA: PerguntaIa[] = [
+  {
+    pergunta: 'Quanto tempo vai levar?',
+    resposta:
+      'A IA estima o prazo previsto de cada chamado a partir da categoria e do histórico de pedidos parecidos. Quem abriu sabe quando esperar uma resposta.',
+  },
+  {
+    pergunta: 'O que é mais urgente?',
+    resposta:
+      'Cada chamado recebe uma prioridade de 1 a 5. Ela começa no peso da categoria (uma árvore com risco pesa mais que um poste apagado) e sobe conforme os vizinhos apoiam.',
+  },
+  {
+    pergunta: 'Onde a cidade demora mais?',
+    resposta:
+      'Juntando os prazos por região, a IA aponta as zonas críticas: os bairros que esperam mais. Assim a subprefeitura enxerga onde precisa agir primeiro.',
+  },
+]
+
 /** Página Sobre: por que o Zela existe, para quem ele é e com o que foi feito. */
 export default function Sobre() {
   const palco = useRef<HTMLDivElement>(null)
@@ -77,6 +101,28 @@ export default function Sobre() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* As 3 perguntas da IA: lista vertical, pergunta grande à esquerda e resposta à direita */}
+      <section aria-labelledby="titulo-ia" className="border-t border-borda">
+        <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+          <h2 id="titulo-ia" className="titulo max-w-[18ch] text-[clamp(2.3rem,5vw,3.75rem)]">
+            Três perguntas que a IA responde
+          </h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">Para cada chamado aberto, a IA do Zela ajuda a responder:</p>
+
+          <dl className="mt-12 md:mt-16">
+            {PERGUNTAS_IA.map((item) => (
+              <div
+                key={item.pergunta}
+                className="grid gap-4 border-t border-borda py-8 md:grid-cols-2 md:gap-16 md:py-10"
+              >
+                <dt className="titulo text-[22px] sm:text-[26px]">{item.pergunta}</dt>
+                <dd className="max-w-[55ch] text-mudo">{item.resposta}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
     </>
