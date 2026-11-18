@@ -59,12 +59,19 @@ export default function Acordeao({ itens }: AcordeaoProps) {
               role="region"
               aria-labelledby={idPergunta}
               inert={!estaAberto}
-              className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+              className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${
                 estaAberto ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
               }`}
             >
               <div className="overflow-hidden">
-                <p className="max-w-[65ch] pb-7 text-mudo">{item.resposta}</p>
+                {/* O texto também aparece aos poucos (opacidade), junto com a altura */}
+                <p
+                  className={`max-w-[65ch] pb-7 text-mudo transition-opacity duration-500 ease-in-out ${
+                    estaAberto ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  {item.resposta}
+                </p>
               </div>
             </div>
           </li>
