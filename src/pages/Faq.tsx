@@ -10,6 +10,9 @@ export default function Faq() {
 
   return (
     <>
+      {/* Título da aba do navegador (o React 19 leva esta tag para o <head> sozinho) */}
+      <title>Perguntas frequentes · Zela</title>
+
       {/* Cabeçalho: as luzes da cidade escrevem "FAQ" no espaço do palco */}
       <section className="relative isolate overflow-hidden">
         <LuzesDaCidade palavra="FAQ" palcoRef={palco} className="-z-10 opacity-70" />
