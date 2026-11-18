@@ -100,6 +100,22 @@ const ODS: Ods[] = [
   },
 ]
 
+/** Uma tecnologia usada no projeto e o papel dela. */
+interface Tecnologia {
+  nome: string
+  papel: string
+}
+
+const TECNOLOGIAS: Tecnologia[] = [
+  { nome: 'React', papel: 'monta a interface em componentes reutilizáveis' },
+  { nome: 'Vite', papel: 'roda o projeto em desenvolvimento e gera a versão final' },
+  { nome: 'TypeScript', papel: 'tipa props, estados e dados da API' },
+  { nome: 'Tailwind CSS', papel: 'estiliza tudo com classes utilitárias e responsivas' },
+  { nome: 'React Router', papel: 'cuida das rotas da SPA, inclusive as com parâmetro' },
+  { nome: 'API Java (Spring Boot)', papel: 'guarda os chamados e aplica as regras de negócio' },
+  { nome: 'Vercel', papel: 'publica o front-end na internet' },
+]
+
 /** Página Sobre: por que o Zela existe, para quem ele é e com o que foi feito. */
 export default function Sobre() {
   const palco = useRef<HTMLDivElement>(null)
@@ -235,6 +251,27 @@ export default function Sobre() {
                   </h3>
                   <p className="mt-3 max-w-[60ch] text-mudo">{ods.porque}</p>
                 </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Tecnologias: com o que o Zela foi construído */}
+      <section aria-labelledby="titulo-tecnologias" className="border-t border-borda bg-noite-2">
+        <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+          <h2 id="titulo-tecnologias" className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">
+            Com o que foi feito
+          </h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">
+            Front-end em React com TypeScript, conversando com a API Java do grupo só por fetch.
+          </p>
+
+          <ul className="mt-12 grid gap-x-16 sm:grid-cols-2 md:mt-16">
+            {TECNOLOGIAS.map((tecnologia) => (
+              <li key={tecnologia.nome} className="border-t border-borda py-6">
+                <p className="rotulo text-[14px] text-papel">{tecnologia.nome}</p>
+                <p className="mt-2 text-mudo">{tecnologia.papel}</p>
               </li>
             ))}
           </ul>
