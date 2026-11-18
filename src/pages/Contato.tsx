@@ -93,6 +93,9 @@ export default function Contato() {
 
   return (
     <>
+      {/* Título da aba do navegador (o React 19 leva esta tag para o <head> sozinho) */}
+      <title>Contato · Zela</title>
+
       {/* Cabeçalho: as luzes da cidade escrevem "CONTATO" no espaço do palco */}
       <section className="relative isolate overflow-hidden">
         <LuzesDaCidade palavra="CONTATO" palcoRef={palco} className="-z-10 opacity-70" />
