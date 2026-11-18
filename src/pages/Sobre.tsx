@@ -73,6 +73,33 @@ const PERSONAS: Persona[] = [
   },
 ]
 
+/** Um Objetivo de Desenvolvimento Sustentável da ONU ligado ao Zela. */
+interface Ods {
+  numero: number
+  nome: string
+  porque: string
+}
+
+const ODS: Ods[] = [
+  {
+    numero: 11,
+    nome: 'Cidades e comunidades sustentáveis',
+    porque:
+      'Meta 11.7: espaços públicos seguros e acessíveis. Rua sem buraco, calçada inteira e poste aceso são exatamente isso.',
+  },
+  {
+    numero: 10,
+    nome: 'Redução das desigualdades',
+    porque:
+      'Mostrar quais bairros esperam mais deixa a diferença de atendimento à vista, e o que está à vista pode ser cobrado.',
+  },
+  {
+    numero: 9,
+    nome: 'Indústria, inovação e infraestrutura',
+    porque: 'A IA ajuda a cidade a cuidar melhor da infraestrutura que já tem, atacando primeiro o que é mais urgente.',
+  },
+]
+
 /** Página Sobre: por que o Zela existe, para quem ele é e com o que foi feito. */
 export default function Sobre() {
   const palco = useRef<HTMLDivElement>(null)
@@ -176,6 +203,38 @@ export default function Sobre() {
                   <p className="mt-2 text-sm text-sodio">{persona.perfil}</p>
                 </div>
                 <p className="max-w-[60ch] text-mudo">{persona.historia}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ODS: os objetivos da ONU com que o Zela contribui */}
+      <section aria-labelledby="titulo-ods" className="border-t border-borda">
+        <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+          <h2 id="titulo-ods" className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">
+            Objetivos que o Zela ajuda a cumprir
+          </h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">
+            Os Objetivos de Desenvolvimento Sustentável (ODS) da ONU com que o projeto se conecta.
+          </p>
+
+          <ul className="mt-12 md:mt-16">
+            {ODS.map((ods) => (
+              <li
+                key={ods.numero}
+                className="grid gap-3 border-t border-borda py-8 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-8 md:py-10"
+              >
+                <p className="titulo numeros text-[clamp(3rem,6vw,4.5rem)] text-sodio" aria-hidden="true">
+                  {ods.numero}
+                </p>
+                <div>
+                  <h3 className="titulo text-[22px] sm:text-[26px]">
+                    <span className="sr-only">ODS {ods.numero}: </span>
+                    {ods.nome}
+                  </h3>
+                  <p className="mt-3 max-w-[60ch] text-mudo">{ods.porque}</p>
+                </div>
               </li>
             ))}
           </ul>
