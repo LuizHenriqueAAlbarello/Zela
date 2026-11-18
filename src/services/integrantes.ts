@@ -15,9 +15,9 @@ export const INTEGRANTES: Integrante[] = [
     rm: '570469',
     nome: 'Matheus Rodrigues Serrão',
     turma: '1TDSPF',
-    foto: '',
-    github: '',
-    linkedin: '',
+    foto: '/integrantes/rm570469.jpg',
+    github: 'https://github.com/MatheusRodriguesSerrao',
+    linkedin: 'https://www.linkedin.com/in/matheus-rodrigues-06060a3a6/',
   },
   {
     rm: '571844',
