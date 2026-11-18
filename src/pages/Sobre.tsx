@@ -123,6 +123,9 @@ export default function Sobre() {
 
   return (
     <>
+      {/* Título da aba do navegador (o React 19 leva esta tag para o <head> sozinho) */}
+      <title>Sobre · Zela</title>
+
       {/* Cabeçalho: as luzes da cidade escrevem "SOBRE" no espaço do palco */}
       <section className="relative isolate overflow-hidden">
         <LuzesDaCidade palavra="SOBRE" palcoRef={palco} className="-z-10 opacity-70" />
@@ -300,4 +303,3 @@ export default function Sobre() {
     </>
   )
 }
-    
