@@ -5,6 +5,7 @@ import Rodape from './components/Rodape'
 import Home from './pages/Home'
 import Integrantes from './pages/Integrantes'
 import PerfilIntegrante from './pages/PerfilIntegrante'
+import Sobre from './pages/Sobre'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -35,7 +36,7 @@ export default function App() {
           <Route path="/chamados" element={<EmObra titulo="Chamados" />} />
           <Route path="/chamados/novo" element={<EmObra titulo="Abrir chamado" />} />
           <Route path="/chamados/:id" element={<EmObra titulo="Detalhe do chamado" />} />
-          <Route path="/sobre" element={<EmObra titulo="Sobre" />} />
+          <Route path="/sobre" element={<Sobre />} />
           <Route path="/faq" element={<EmObra titulo="FAQ" />} />
           <Route path="/integrantes" element={<Integrantes />} />
           <Route path="/integrantes/:rm" element={<PerfilIntegrante />} />
