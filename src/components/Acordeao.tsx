@@ -50,8 +50,22 @@ export default function Acordeao({ itens }: AcordeaoProps) {
                 />
               </button>
             </h3>
-            <div id={idResposta} role="region" aria-labelledby={idPergunta} hidden={!estaAberto}>
-              <p className="max-w-[65ch] pb-7 text-mudo">{item.resposta}</p>
+            {/*
+              Animação de altura: a grade vai de 0fr (linha fechada) a 1fr (altura do conteúdo).
+              "inert" tira a resposta fechada do Tab e dos leitores de tela, já que ela continua no HTML.
+            */}
+            <div
+              id={idResposta}
+              role="region"
+              aria-labelledby={idPergunta}
+              inert={!estaAberto}
+              className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                estaAberto ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <p className="max-w-[65ch] pb-7 text-mudo">{item.resposta}</p>
+              </div>
             </div>
           </li>
         )
