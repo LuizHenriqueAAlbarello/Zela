@@ -1,8 +1,10 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { LoaderCircle } from 'lucide-react'
+import { flushSync } from 'react-dom'
+import { CircleCheck, LoaderCircle } from 'lucide-react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import type { AssuntoContato, DadosContato, ErrosContato, EstadoEnvio } from '../types/contato'
 import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM, enviarContato, validarContato } from '../services/contato'
+import { primeiroNome } from '../services/integrantes'
 
 /** Formulário vazio: estado inicial e o que volta depois de limpar. */
 const VAZIO: DadosContato = { nome: '', email: '', assunto: '', mensagem: '' }
@@ -33,6 +35,8 @@ export default function Contato() {
   const refEmail = useRef<HTMLInputElement>(null)
   const refAssunto = useRef<HTMLSelectElement>(null)
   const refMensagem = useRef<HTMLTextAreaElement>(null)
+  // Card de sucesso: recebe o foco quando aparece, para o leitor de tela anunciar o resultado
+  const refSucesso = useRef<HTMLDivElement>(null)
 
   /** Coloca o cursor no campo pedido. */
   function focarCampo(campo: keyof DadosContato) {
@@ -60,11 +64,12 @@ export default function Contato() {
       return
     }
 
-    // Tudo certo: mostra "Enviando…", espera o envio terminar e limpa o formulário
+    // Tudo certo: mostra "Enviando…", espera o envio terminar e troca o formulário pelo card de sucesso
     setEstado('enviando')
     await enviarContato(dados)
-    setDados(VAZIO)
-    setEstado('preenchendo')
+    // flushSync desenha o card na hora, para o foco conseguir ir até ele logo em seguida
+    flushSync(() => setEstado('enviado'))
+    refSucesso.current?.focus()
   }
 
   return (
@@ -79,8 +84,8 @@ export default function Contato() {
               Fale com a <span className="text-sodio">equipe</span>
             </h1>
             <p className="animate-chegar text-mudo [animation-delay:120ms]">
-              Dúvida, sugestão ou problema no site? Escreva para a gente. Para registrar um problema da rua, use
-              "Abrir chamado".
+              Dúvida, sugestão ou problema no site? Escreva para a gente. Para registrar um problema da rua, use "Abrir
+              chamado".
             </p>
           </div>
         </div>
@@ -94,126 +99,143 @@ export default function Contato() {
               Envie sua mensagem
             </h2>
 
-            {/* noValidate: desliga os balões do navegador, porque a validação é feita pelo nosso código */}
-            <form noValidate onSubmit={enviar} aria-busy={estado === 'enviando'} className="mt-8 space-y-6">
-              <div>
-                <label htmlFor="nome" className={ROTULO}>
-                  Nome
-                </label>
-                <input
-                  ref={refNome}
-                  id="nome"
-                  name="nome"
-                  type="text"
-                  autoComplete="name"
-                  value={dados.nome}
-                  onChange={(e) => atualizar('nome', e.target.value)}
-                  aria-invalid={Boolean(erros.nome)}
-                  aria-describedby={erros.nome ? 'nome-erro' : undefined}
-                  className={`${CAMPO} ${erros.nome ? 'border-erro' : ''}`}
-                />
-                {erros.nome && (
-                  <p id="nome-erro" role="alert" className={ERRO}>
-                    {erros.nome}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="email" className={ROTULO}>
-                  E-mail
-                </label>
-                <input
-                  ref={refEmail}
-                  id="email"
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  value={dados.email}
-                  onChange={(e) => atualizar('email', e.target.value)}
-                  aria-invalid={Boolean(erros.email)}
-                  aria-describedby={erros.email ? 'email-erro' : undefined}
-                  className={`${CAMPO} ${erros.email ? 'border-erro' : ''}`}
-                />
-                {erros.email && (
-                  <p id="email-erro" role="alert" className={ERRO}>
-                    {erros.email}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="assunto" className={ROTULO}>
-                  Assunto
-                </label>
-                {/* [color-scheme:dark] deixa a lista de opções do navegador escura, combinando com o site */}
-                <select
-                  ref={refAssunto}
-                  id="assunto"
-                  name="assunto"
-                  value={dados.assunto}
-                  onChange={(e) => atualizar('assunto', e.target.value as AssuntoContato | '')}
-                  aria-invalid={Boolean(erros.assunto)}
-                  aria-describedby={erros.assunto ? 'assunto-erro' : undefined}
-                  className={`${CAMPO} [color-scheme:dark] ${erros.assunto ? 'border-erro' : ''}`}
-                >
-                  <option value="">Escolha um assunto</option>
-                  {ASSUNTOS_CONTATO.map((assunto) => (
-                    <option key={assunto.valor} value={assunto.valor}>
-                      {assunto.rotulo}
-                    </option>
-                  ))}
-                </select>
-                {erros.assunto && (
-                  <p id="assunto-erro" role="alert" className={ERRO}>
-                    {erros.assunto}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="mensagem" className={ROTULO}>
-                  Mensagem
-                </label>
-                <textarea
-                  ref={refMensagem}
-                  id="mensagem"
-                  name="mensagem"
-                  rows={6}
-                  value={dados.mensagem}
-                  onChange={(e) => atualizar('mensagem', e.target.value)}
-                  aria-invalid={Boolean(erros.mensagem)}
-                  aria-describedby={erros.mensagem ? 'mensagem-contador mensagem-erro' : 'mensagem-contador'}
-                  className={`${CAMPO_BASE} min-h-40 resize-y py-3 ${erros.mensagem ? 'border-erro' : ''}`}
-                />
-                {/* Contador: mostra quantos caracteres já foram digitados e qual é o mínimo */}
-                <p id="mensagem-contador" className="mt-1.5 text-sm text-mudo">
-                  <span className="numeros">{dados.mensagem.trim().length}</span> caracteres · mínimo{' '}
-                  <span className="numeros">{MINIMO_MENSAGEM}</span>
-                </p>
-                {erros.mensagem && (
-                  <p id="mensagem-erro" role="alert" className={ERRO}>
-                    {erros.mensagem}
-                  </p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={estado === 'enviando'}
-                className="rotulo inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-sodio px-6 text-[14px] text-noite shadow-[0_8px_30px_-8px_rgba(255,154,60,.55)] transition-colors hover:bg-[#ffb066] disabled:opacity-60"
+            {estado === 'enviado' ? (
+              // Mensagem de sucesso: aparece no lugar do formulário depois do envio
+              <div
+                ref={refSucesso}
+                tabIndex={-1}
+                role="status"
+                className="mt-8 rounded-3xl border border-verde/40 bg-noite p-6 outline-none sm:p-8"
               >
-                {estado === 'enviando' ? (
-                  <>
-                    <LoaderCircle aria-hidden="true" strokeWidth={2.4} className="size-4 animate-spin" />
-                    Enviando…
-                  </>
-                ) : (
-                  'Enviar mensagem'
-                )}
-              </button>
-            </form>
+                <CircleCheck aria-hidden="true" strokeWidth={2.4} className="size-8 text-verde" />
+                <h3 className="titulo mt-5 text-[22px] sm:text-[26px]">Mensagem recebida</h3>
+                <p className="mt-3 text-mudo">
+                  Obrigado, {primeiroNome(dados.nome)}. Respondemos em até 2 dias úteis no e-mail{' '}
+                  <span className="break-all text-papel">{dados.email.trim()}</span>.
+                </p>
+              </div>
+            ) : (
+              /* noValidate: desliga os balões do navegador, porque a validação é feita pelo nosso código */
+              <form noValidate onSubmit={enviar} aria-busy={estado === 'enviando'} className="mt-8 space-y-6">
+                <div>
+                  <label htmlFor="nome" className={ROTULO}>
+                    Nome
+                  </label>
+                  <input
+                    ref={refNome}
+                    id="nome"
+                    name="nome"
+                    type="text"
+                    autoComplete="name"
+                    value={dados.nome}
+                    onChange={(e) => atualizar('nome', e.target.value)}
+                    aria-invalid={Boolean(erros.nome)}
+                    aria-describedby={erros.nome ? 'nome-erro' : undefined}
+                    className={`${CAMPO} ${erros.nome ? 'border-erro' : ''}`}
+                  />
+                  {erros.nome && (
+                    <p id="nome-erro" role="alert" className={ERRO}>
+                      {erros.nome}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="email" className={ROTULO}>
+                    E-mail
+                  </label>
+                  <input
+                    ref={refEmail}
+                    id="email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={dados.email}
+                    onChange={(e) => atualizar('email', e.target.value)}
+                    aria-invalid={Boolean(erros.email)}
+                    aria-describedby={erros.email ? 'email-erro' : undefined}
+                    className={`${CAMPO} ${erros.email ? 'border-erro' : ''}`}
+                  />
+                  {erros.email && (
+                    <p id="email-erro" role="alert" className={ERRO}>
+                      {erros.email}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="assunto" className={ROTULO}>
+                    Assunto
+                  </label>
+                  {/* [color-scheme:dark] deixa a lista de opções do navegador escura, combinando com o site */}
+                  <select
+                    ref={refAssunto}
+                    id="assunto"
+                    name="assunto"
+                    value={dados.assunto}
+                    onChange={(e) => atualizar('assunto', e.target.value as AssuntoContato | '')}
+                    aria-invalid={Boolean(erros.assunto)}
+                    aria-describedby={erros.assunto ? 'assunto-erro' : undefined}
+                    className={`${CAMPO} [color-scheme:dark] ${erros.assunto ? 'border-erro' : ''}`}
+                  >
+                    <option value="">Escolha um assunto</option>
+                    {ASSUNTOS_CONTATO.map((assunto) => (
+                      <option key={assunto.valor} value={assunto.valor}>
+                        {assunto.rotulo}
+                      </option>
+                    ))}
+                  </select>
+                  {erros.assunto && (
+                    <p id="assunto-erro" role="alert" className={ERRO}>
+                      {erros.assunto}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="mensagem" className={ROTULO}>
+                    Mensagem
+                  </label>
+                  <textarea
+                    ref={refMensagem}
+                    id="mensagem"
+                    name="mensagem"
+                    rows={6}
+                    value={dados.mensagem}
+                    onChange={(e) => atualizar('mensagem', e.target.value)}
+                    aria-invalid={Boolean(erros.mensagem)}
+                    aria-describedby={erros.mensagem ? 'mensagem-contador mensagem-erro' : 'mensagem-contador'}
+                    className={`${CAMPO_BASE} min-h-40 resize-y py-3 ${erros.mensagem ? 'border-erro' : ''}`}
+                  />
+                  {/* Contador: mostra quantos caracteres já foram digitados e qual é o mínimo */}
+                  <p id="mensagem-contador" className="mt-1.5 text-sm text-mudo">
+                    <span className="numeros">{dados.mensagem.trim().length}</span> caracteres · mínimo{' '}
+                    <span className="numeros">{MINIMO_MENSAGEM}</span>
+                  </p>
+                  {erros.mensagem && (
+                    <p id="mensagem-erro" role="alert" className={ERRO}>
+                      {erros.mensagem}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={estado === 'enviando'}
+                  className="rotulo inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-sodio px-6 text-[14px] text-noite shadow-[0_8px_30px_-8px_rgba(255,154,60,.55)] transition-colors hover:bg-[#ffb066] disabled:opacity-60"
+                >
+                  {estado === 'enviando' ? (
+                    <>
+                      <LoaderCircle aria-hidden="true" strokeWidth={2.4} className="size-4 animate-spin" />
+                      Enviando…
+                    </>
+                  ) : (
+                    'Enviar mensagem'
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
