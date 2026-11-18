@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { Plus } from 'lucide-react'
 import type { ItemFaq } from '../types/faq'
 
 interface AcordeaoProps {
@@ -36,9 +37,17 @@ export default function Acordeao({ itens }: AcordeaoProps) {
                 aria-expanded={estaAberto}
                 aria-controls={idResposta}
                 onClick={() => alternar(indice)}
-                className="flex min-h-11 w-full items-center justify-between gap-6 py-6 text-left text-[19px] font-semibold text-papel sm:text-[21px]"
+                className={`flex min-h-11 w-full items-center justify-between gap-6 py-6 text-left text-[19px] font-semibold transition-colors duration-200 hover:text-sodio sm:text-[21px] ${
+                  estaAberto ? 'text-sodio' : 'text-papel'
+                }`}
               >
                 {item.pergunta}
+                {/* O "+" gira 45° e vira um "x" quando a resposta está aberta */}
+                <Plus
+                  aria-hidden="true"
+                  strokeWidth={2.4}
+                  className={`size-6 shrink-0 transition-transform duration-300 ${estaAberto ? 'rotate-45' : ''}`}
+                />
               </button>
             </h3>
             <div id={idResposta} role="region" aria-labelledby={idPergunta} hidden={!estaAberto}>
