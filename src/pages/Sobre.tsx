@@ -45,6 +45,34 @@ const PERGUNTAS_IA: PerguntaIa[] = [
   },
 ]
 
+/** Uma pessoa que representa quem usa o Zela. */
+interface Persona {
+  nome: string
+  perfil: string
+  historia: string
+}
+
+const PERSONAS: Persona[] = [
+  {
+    nome: 'Dona Maria',
+    perfil: '68 anos, Grajaú',
+    historia:
+      'Não tem paciência para formulário comprido. Abre o chamado do poste apagado da rua dela em poucos toques e acompanha o andamento sem precisar ligar para ninguém.',
+  },
+  {
+    nome: 'Lucas',
+    perfil: '24 anos, motoboy',
+    historia:
+      'Passa pelo mesmo buraco todo dia. Em vez de abrir outro pedido igual, apoia o chamado que já existe, e cada apoio ajuda a subir a prioridade.',
+  },
+  {
+    nome: 'Carla',
+    perfil: 'Gestora da subprefeitura',
+    historia:
+      'Precisa decidir o que atender primeiro. Vê a fila ordenada por prioridade e as zonas onde a espera é maior, e atualiza o status até o problema ser resolvido.',
+  },
+]
+
 /** Página Sobre: por que o Zela existe, para quem ele é e com o que foi feito. */
 export default function Sobre() {
   const palco = useRef<HTMLDivElement>(null)
@@ -123,6 +151,34 @@ export default function Sobre() {
               </div>
             ))}
           </dl>
+        </div>
+      </section>
+
+      {/* Para quem: as 3 personas, cada uma com o jeito como usa o Zela */}
+      <section aria-labelledby="titulo-personas" className="border-t border-borda bg-noite-2">
+        <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+          <h2 id="titulo-personas" className="titulo text-[clamp(2.3rem,5vw,3.75rem)]">
+            Para quem é o Zela
+          </h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">
+            Moradores de bairros periféricos, pedestres, pessoas com deficiência e idosos, e quem cuida da cidade
+            do outro lado do balcão.
+          </p>
+
+          <ul className="mt-12 md:mt-16">
+            {PERSONAS.map((persona) => (
+              <li
+                key={persona.nome}
+                className="grid gap-3 border-t border-borda py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16 md:py-10"
+              >
+                <div>
+                  <h3 className="titulo text-[22px] sm:text-[26px]">{persona.nome}</h3>
+                  <p className="mt-2 text-sm text-sodio">{persona.perfil}</p>
+                </div>
+                <p className="max-w-[60ch] text-mudo">{persona.historia}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </>
