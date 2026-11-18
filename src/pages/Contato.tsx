@@ -15,6 +15,9 @@ const CAMPO = `${CAMPO_BASE} h-12`
 const ROTULO = 'mb-1.5 block text-[13px] font-semibold text-mudo'
 const ERRO = 'mt-1.5 text-sm font-semibold text-erro'
 
+/** Ordem dos campos na tela: o foco vai para o primeiro desta lista que tiver erro. */
+const ORDEM_CAMPOS: (keyof DadosContato)[] = ['nome', 'email', 'assunto', 'mensagem']
+
 /** Página Contato: formulário para falar com a equipe do Zela. */
 export default function Contato() {
   const palco = useRef<HTMLDivElement>(null)
@@ -22,6 +25,17 @@ export default function Contato() {
   const [dados, setDados] = useState<DadosContato>(VAZIO)
   // Mensagem de erro de cada campo; só aparece depois de tentar enviar
   const [erros, setErros] = useState<ErrosContato>({})
+  // Referência a cada campo, para conseguir mover o foco até ele
+  const refNome = useRef<HTMLInputElement>(null)
+  const refEmail = useRef<HTMLInputElement>(null)
+  const refAssunto = useRef<HTMLSelectElement>(null)
+  const refMensagem = useRef<HTMLTextAreaElement>(null)
+
+  /** Coloca o cursor no campo pedido. */
+  function focarCampo(campo: keyof DadosContato) {
+    const referencias = { nome: refNome, email: refEmail, assunto: refAssunto, mensagem: refMensagem }
+    referencias[campo].current?.focus()
+  }
 
   /** Atualiza um campo só, mantendo os outros como estão, e apaga o erro dele enquanto a pessoa corrige. */
   function atualizar<Campo extends keyof DadosContato>(campo: Campo, valor: DadosContato[Campo]) {
@@ -33,7 +47,14 @@ export default function Contato() {
     // Impede o navegador de recarregar a página ao enviar o formulário
     evento.preventDefault()
     // Valida antes de enviar: cada campo com problema ganha a sua mensagem
-    setErros(validarContato(dados))
+    const novosErros = validarContato(dados)
+    setErros(novosErros)
+
+    // Leva o foco ao primeiro campo com erro (ajuda quem usa teclado ou leitor de tela)
+    const primeiroComErro = ORDEM_CAMPOS.find((campo) => novosErros[campo])
+    if (primeiroComErro) {
+      focarCampo(primeiroComErro)
+    }
   }
 
   return (
@@ -70,6 +91,7 @@ export default function Contato() {
                   Nome
                 </label>
                 <input
+                  ref={refNome}
                   id="nome"
                   name="nome"
                   type="text"
@@ -92,6 +114,7 @@ export default function Contato() {
                   E-mail
                 </label>
                 <input
+                  ref={refEmail}
                   id="email"
                   name="email"
                   type="email"
@@ -116,6 +139,7 @@ export default function Contato() {
                 </label>
                 {/* [color-scheme:dark] deixa a lista de opções do navegador escura, combinando com o site */}
                 <select
+                  ref={refAssunto}
                   id="assunto"
                   name="assunto"
                   value={dados.assunto}
@@ -143,6 +167,7 @@ export default function Contato() {
                   Mensagem
                 </label>
                 <textarea
+                  ref={refMensagem}
                   id="mensagem"
                   name="mensagem"
                   rows={6}
