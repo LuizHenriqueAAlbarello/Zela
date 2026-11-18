@@ -7,6 +7,7 @@ import Integrantes from './pages/Integrantes'
 import PerfilIntegrante from './pages/PerfilIntegrante'
 import Sobre from './pages/Sobre'
 import Faq from './pages/Faq'
+import Contato from './pages/Contato'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
 
@@ -41,7 +42,7 @@ export default function App() {
           <Route path="/faq" element={<Faq />} />
           <Route path="/integrantes" element={<Integrantes />} />
           <Route path="/integrantes/:rm" element={<PerfilIntegrante />} />
-          <Route path="/contato" element={<EmObra titulo="Contato" />} />
+          <Route path="/contato" element={<Contato />} />
           <Route path="*" element={<NaoEncontrada />} />
         </Routes>
       </main>
