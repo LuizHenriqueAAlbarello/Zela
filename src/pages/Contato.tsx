@@ -1,9 +1,17 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { flushSync } from 'react-dom'
-import { CircleCheck, LoaderCircle } from 'lucide-react'
+import { ArrowUpRight, CircleCheck, LoaderCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import LuzesDaCidade from '../components/LuzesDaCidade'
 import type { AssuntoContato, DadosContato, ErrosContato, EstadoEnvio } from '../types/contato'
-import { ASSUNTOS_CONTATO, MINIMO_MENSAGEM, enviarContato, validarContato } from '../services/contato'
+import {
+  ASSUNTOS_CONTATO,
+  EMAIL_EQUIPE,
+  MINIMO_MENSAGEM,
+  URL_REPOSITORIO,
+  enviarContato,
+  validarContato,
+} from '../services/contato'
 import { primeiroNome } from '../services/integrantes'
 
 /** Formulário vazio: estado inicial e o que volta depois de limpar. */
@@ -17,6 +25,7 @@ const CAMPO = `${CAMPO_BASE} h-12`
 
 const ROTULO = 'mb-1.5 block text-[13px] font-semibold text-mudo'
 const ERRO = 'mt-1.5 text-sm font-semibold text-erro'
+const LINK = 'font-semibold text-papel underline decoration-borda underline-offset-4 transition-colors hover:text-sodio'
 
 /** Ordem dos campos na tela: o foco vai para o primeiro desta lista que tiver erro. */
 const ORDEM_CAMPOS: (keyof DadosContato)[] = ['nome', 'email', 'assunto', 'mensagem']
@@ -103,7 +112,7 @@ export default function Contato() {
 
       {/* Formulário de contato */}
       <section aria-labelledby="titulo-formulario" className="border-t border-borda bg-noite-2">
-        <div className="mx-auto max-w-[1320px] px-5 py-16 sm:px-8 md:py-24">
+        <div className="mx-auto grid max-w-[1320px] gap-14 px-5 py-16 sm:px-8 md:py-24">
           <div className="max-w-[640px]">
             <h2 id="titulo-formulario" className="titulo text-[22px] sm:text-[26px]">
               Envie sua mensagem
@@ -254,6 +263,58 @@ export default function Contato() {
               </form>
             )}
           </div>
+
+          {/* Outros canais e o lembrete de emergência */}
+          <aside aria-labelledby="titulo-canais" className="max-w-[640px]">
+            <h2 id="titulo-canais" className="titulo text-[22px] sm:text-[26px]">
+              Outros canais
+            </h2>
+            <ul className="mt-6 space-y-5">
+              {EMAIL_EQUIPE && (
+                <li>
+                  <p className="text-[13px] font-semibold text-mudo">E-mail da equipe</p>
+                  <a href={`mailto:${EMAIL_EQUIPE}`} className={`${LINK} break-all`}>
+                    {EMAIL_EQUIPE}
+                  </a>
+                </li>
+              )}
+              <li>
+                <p className="text-[13px] font-semibold text-mudo">Código do projeto</p>
+                <a
+                  href={URL_REPOSITORIO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${LINK} inline-flex items-center gap-1`}
+                >
+                  Repositório no GitHub
+                  <ArrowUpRight aria-hidden="true" strokeWidth={2.4} className="size-4" />
+                  <span className="sr-only">(abre em nova aba)</span>
+                </a>
+              </li>
+              <li>
+                <p className="text-[13px] font-semibold text-mudo">Quem fez</p>
+                <Link to="/integrantes" className={LINK}>
+                  Conheça os integrantes
+                </Link>
+              </li>
+            </ul>
+
+            {/* Emergência: o Zela não atende urgências, então a página aponta para quem atende */}
+            <div className="mt-10 rounded-3xl border border-borda bg-noite p-6">
+              <p className="font-semibold text-papel">Emergência não é caso para o Zela.</p>
+              <p className="mt-2 text-mudo">
+                Árvore caindo, alagamento ou deslizamento: Defesa Civil{' '}
+                <a href="tel:199" className={`${LINK} numeros`}>
+                  199
+                </a>
+                . Incêndio ou pessoa em risco: Bombeiros{' '}
+                <a href="tel:193" className={`${LINK} numeros`}>
+                  193
+                </a>
+                .
+              </p>
+            </div>
+          </aside>
         </div>
       </section>
     </>

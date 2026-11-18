@@ -68,3 +68,9 @@ export function enviarContato(dados: DadosContato): Promise<DadosContato> {
     setTimeout(() => resolver(dados), TEMPO_ENVIO)
   })
 }
+
+/** E-mail da equipe. Enquanto estiver vazio, a linha de e-mail não aparece na página de Contato. */
+export const EMAIL_EQUIPE = ''
+
+/** Repositório público do projeto no GitHub. */
+export const URL_REPOSITORIO = 'https://github.com/LuizHenriqueAAlbarello/Zela'
