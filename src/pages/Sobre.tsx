@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import LuzesDaCidade from '../components/LuzesDaCidade'
+import BotaoLink from '../components/Botao'
 
 /** Um número de destaque com a explicação e a fonte de onde ele veio. */
 interface Numero {
@@ -277,6 +278,26 @@ export default function Sobre() {
           </ul>
         </div>
       </section>
+
+      {/* Chamada final: depois de entender o Zela, o próximo passo */}
+      <section aria-labelledby="titulo-chamada" className="border-t border-borda">
+        <div className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+          <h2 id="titulo-chamada" className="titulo max-w-[16ch] text-[clamp(2.3rem,5vw,3.75rem)]">
+            Viu um problema na sua rua?
+          </h2>
+          <p className="mt-6 max-w-[50ch] text-mudo">
+            Abra um chamado em poucos passos ou, se ele já existir, apoie o do vizinho. Dúvidas sobre o projeto
+            vão pelo contato.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <BotaoLink para="/chamados/novo">Abrir chamado</BotaoLink>
+            <BotaoLink para="/contato" variante="contorno">
+              Falar com a equipe
+            </BotaoLink>
+          </div>
+        </div>
+      </section>
     </>
   )
 }
+    
