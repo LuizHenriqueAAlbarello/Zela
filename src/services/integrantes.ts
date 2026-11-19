@@ -30,7 +30,7 @@ export const INTEGRANTES: Integrante[] = [
   {
     rm: '573347',
     nome: 'Lucas Luque Cabral',
-    turma: '1TDSPF',
+    turma: '1TDSPV',
     foto: '/integrantes/rm573347.jpg',
     github: 'https://github.com/LucasCabral0603',
     linkedin: 'https://www.linkedin.com/in/lucas-cabral-660940350/',
