@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import CaminhoLuz from '../components/CaminhoLuz'
@@ -14,6 +13,7 @@ import {
   mensagemDoErro,
 } from '../services/api'
 import { nomeCategoria } from '../services/categorias'
+import { esquecerCidadao, obterCidadaoId } from '../services/cidadaos'
 import type {
   Atualizacao,
   Chamado,
@@ -129,21 +129,20 @@ export default function DetalheChamado() {
     setMensagemApoio('')
 
     try {
-      await apoiarChamado(chamado.id)
+      try {
+        await apoiarChamado(chamado.id, await obterCidadaoId())
+      } catch (erroApoio) {
+        if (!(erroApoio instanceof ErroApi && erroApoio.status === 400)) throw erroApoio
+        esquecerCidadao()
+        await apoiarChamado(chamado.id, await obterCidadaoId())
+      }
       setApoiado(true)
-      setChamado((atual) =>
-        atual
-          ? {
-              ...atual,
-              apoios: atual.apoios + 1,
-              prioridade: Math.min(
-                5,
-                atual.prioridade + (atual.apoios + 1) % 5 === 0 ? 1 : 0,
-              ),
-            }
-          : atual,
-      )
       setMensagemApoio('Seu apoio foi registrado com sucesso!')
+      try {
+        setChamado(await buscarChamado(chamado.id))
+      } catch {
+        setChamado((atual) => (atual ? { ...atual, apoios: atual.apoios + 1 } : atual))
+      }
     } catch (erroRecebido) {
       if (erroRecebido instanceof ErroApi && erroRecebido.status === 409) {
         setMensagemApoio(

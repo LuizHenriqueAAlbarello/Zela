@@ -1,4 +1,3 @@
-
 import { api } from './api'
 import { categoriaDaApi } from './categorias'
 import type {
@@ -60,10 +59,11 @@ export function listarAtualizacoes(
   return api.get<Atualizacao[]>(`/chamados/${id}/atualizacoes`, signal)
 }
 
-/** POST /chamados/{id}/apoios: apoia um chamado. */
+/** POST /chamados/{id}/apoios: o cidadão apoia um chamado ("eu também vi isso"). */
 export function apoiarChamado(
   id: number,
+  cidadaoId: number,
   signal?: AbortSignal,
 ): Promise<void> {
-  return api.post<void>(`/chamados/${id}/apoios`, undefined, signal)
+  return api.post<void>(`/chamados/${id}/apoios`, { cidadaoId }, signal)
 }

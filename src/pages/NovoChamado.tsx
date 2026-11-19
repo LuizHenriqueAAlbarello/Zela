@@ -1,8 +1,8 @@
-
 import { useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { CATEGORIAS, categoriaParaApi } from '../services/categorias'
 import { criarChamado } from '../services/chamados'
+import { obterCidadaoId } from '../services/cidadaos'
 import { ErroApi, mensagemDoErro } from '../services/api'
 import type { CategoriaId, Chamado } from '../types/chamado'
 
@@ -62,7 +62,7 @@ export default function NovoChamado() {
     try {
       const novoChamado = await criarChamado({
             categoriaId: categoriaParaApi(categoria),
-            cidadaoId: 1,
+            cidadaoId: await obterCidadaoId(),
             endereco: endereco.trim(),
             bairro: bairro.trim(),
             descricao: descricao.trim(),
