@@ -10,6 +10,8 @@ import Faq from './pages/Faq'
 import Contato from './pages/Contato'
 import EmObra from './pages/EmObra'
 import NaoEncontrada from './pages/NaoEncontrada'
+import NovoChamado from './pages/NovoChamado'
+
 
 /** Ao trocar de página, volta para o topo (o navegador não faz isso sozinho numa SPA). */
 function RolarParaTopo() {
@@ -36,7 +38,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/chamados" element={<EmObra titulo="Chamados" />} />
-          <Route path="/chamados/novo" element={<EmObra titulo="Abrir chamado" />} />
+          <Route path="/chamados/novo" element={<NovoChamado />} />
           <Route path="/chamados/:id" element={<EmObra titulo="Detalhe do chamado" />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/faq" element={<Faq />} />
