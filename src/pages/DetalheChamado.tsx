@@ -1,10 +1,23 @@
 
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import CaminhoLuz from '../components/CaminhoLuz'
 import SeloStatus from '../components/SeloStatus'
-import type { StatusChamado } from '../types/chamado'
-
-const statusAtual: StatusChamado = 'EM_ANALISE'
+import {
+  buscarChamado,
+  listarAtualizacoes,
+  apoiarChamado,
+} from '../services/chamados'
+import {
+  ErroApi,
+  ehCancelamento,
+  mensagemDoErro,
+} from '../services/api'
+import { nomeCategoria } from '../services/categorias'
+import type {
+  Atualizacao,
+  Chamado,
+} from '../types/chamado'
 
 const paradas = [
   {
@@ -20,7 +33,7 @@ const paradas = [
   {
     status: 'EM_EXECUCAO' as const,
     quem: 'Em execução',
-    texto: 'O serviço será realizado pela equipe responsável.',
+    texto: 'O serviço está sendo realizado pela equipe responsável.',
   },
   {
     status: 'RESOLVIDO' as const,
@@ -29,12 +42,117 @@ const paradas = [
   },
 ]
 
+function formatarData(data: string) {
+  const valor = new Date(data)
+
+  if (Number.isNaN(valor.getTime())) return data
+
+  return valor.toLocaleString('pt-BR')
+}
+
 export default function DetalheChamado() {
   const { id } = useParams()
 
-  const indiceAtual = paradas.findIndex(
-    (parada) => parada.status === statusAtual,
-  )
+  const [chamado, setChamado] = useState<Chamado | null>(null)
+  const [atualizacoes, setAtualizacoes] = useState<Atualizacao[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
+  const [carregandoApoio, setCarregandoApoio] = useState(false)
+  const [apoiado, setApoiado] = useState(false)
+  const [mensagemApoio, setMensagemApoio] = useState('')
+
+  useEffect(() => {
+    const controlador = new AbortController()
+
+    async function carregarDados() {
+      const numeroId = Number(id)
+
+      if (!id || !Number.isInteger(numeroId) || numeroId <= 0) {
+        setErro('O número do chamado é inválido.')
+        setCarregando(false)
+        return
+      }
+
+      setCarregando(true)
+      setErro('')
+
+      try {
+        const [dadosChamado, historico] = await Promise.all([
+          buscarChamado(numeroId, controlador.signal),
+          listarAtualizacoes(numeroId, controlador.signal),
+        ])
+
+        setChamado(dadosChamado)
+        setAtualizacoes(historico)
+      } catch (erroRecebido) {
+        if (!ehCancelamento(erroRecebido)) {
+          setErro(mensagemDoErro(erroRecebido))
+        }
+      } finally {
+        if (!controlador.signal.aborted) {
+          setCarregando(false)
+        }
+      }
+    }
+
+    carregarDados()
+
+    return () => controlador.abort()
+  }, [id])
+
+  async function handleApoiar() {
+    if (!chamado) return
+
+    setCarregandoApoio(true)
+    setMensagemApoio('')
+
+    try {
+      await apoiarChamado(chamado.id)
+      setApoiado(true)
+      setMensagemApoio('Seu apoio foi registrado com sucesso!')
+    } catch (erroRecebido) {
+      if (erroRecebido instanceof ErroApi && erroRecebido.status === 409) {
+        setMensagemApoio(
+          'Você já apoiou este chamado ou é a pessoa que o registrou.',
+        )
+      } else {
+        setMensagemApoio(mensagemDoErro(erroRecebido))
+      }
+    } finally {
+      setCarregandoApoio(false)
+    }
+  }
+
+  const indiceAtual = chamado
+    ? paradas.findIndex((parada) => parada.status === chamado.status)
+    : -1
+
+  if (carregando) {
+    return (
+      <div className="min-h-screen bg-noite px-6 py-20 text-center text-papel">
+        <p className="text-mudo">Carregando informações do chamado...</p>
+      </div>
+    )
+  }
+
+  if (erro || !chamado) {
+    return (
+      <div className="min-h-screen bg-noite px-6 py-20 text-papel">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-borda bg-noite-2 p-8">
+          <h1 className="titulo text-3xl">Não foi possível carregar</h1>
+          <p role="alert" className="mt-4 text-mudo">
+            {erro || 'Chamado não encontrado.'}
+          </p>
+          <Link
+            to="/chamados"
+            className="rotulo mt-8 inline-flex rounded-full bg-sodio px-6 py-3 text-noite"
+          >
+            Voltar para chamados
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-noite text-papel">
@@ -47,9 +165,7 @@ export default function DetalheChamado() {
             ← Voltar para chamados
           </Link>
 
-          <p className="rotulo mt-8 text-sodio">
-            ACOMPANHAMENTO
-          </p>
+          <p className="rotulo mt-8 text-sodio">ACOMPANHAMENTO</p>
 
           <h1 className="titulo mt-3 text-4xl md:text-6xl">
             DETALHE DO CHAMADO
@@ -67,40 +183,83 @@ export default function DetalheChamado() {
             <div>
               <p className="text-sm text-mudo">Protocolo</p>
               <h2 className="numeros mt-1 text-2xl">
-                #{id}
+                #{chamado.id}
               </h2>
             </div>
 
-            <SeloStatus status={statusAtual} tamanho="md" />
+            <SeloStatus status={chamado.status} tamanho="md" />
           </div>
 
           <div className="mt-8 grid gap-6 border-t border-borda pt-6 md:grid-cols-2">
             <div>
               <p className="text-sm text-mudo">Categoria</p>
-              <p className="mt-2 font-semibold">Buraco na via</p>
+              <p className="mt-2 font-semibold">
+                {nomeCategoria(chamado.categoria)}
+              </p>
             </div>
 
             <div>
               <p className="text-sm text-mudo">Endereço</p>
-              <p className="mt-2 font-semibold">
-                Aguardando dados do chamado
-              </p>
+              <p className="mt-2 font-semibold">{chamado.endereco}</p>
             </div>
 
             <div>
               <p className="text-sm text-mudo">Bairro</p>
-              <p className="mt-2 font-semibold">
-                Aguardando dados do chamado
-              </p>
+              <p className="mt-2 font-semibold">{chamado.bairro}</p>
             </div>
 
             <div>
               <p className="text-sm text-mudo">Data de abertura</p>
               <p className="mt-2 font-semibold">
-                Aguardando dados do chamado
+                {formatarData(chamado.criadoEm)}
               </p>
             </div>
+
+            <div>
+              <p className="text-sm text-mudo">Prioridade</p>
+              <p className="mt-2 font-semibold">{chamado.prioridade}</p>
+            </div>
+
+            {chamado.prazoPrevistoDias != null && (
+              <div>
+                <p className="text-sm text-mudo">Prazo previsto</p>
+                <p className="mt-2 font-semibold">
+                  {chamado.prazoPrevistoDias} dias
+                </p>
+              </div>
+            )}
           </div>
+
+          <div className="mt-8 border-t border-borda pt-6">
+            <p className="text-sm text-mudo">Descrição do problema</p>
+            <p className="mt-2 leading-relaxed">{chamado.descricao}</p>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-borda pt-6">
+            <div>
+              <p className="text-sm text-mudo">Apoios da comunidade</p>
+              <p className="numeros mt-1 text-2xl">{chamado.apoios}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleApoiar}
+              disabled={carregandoApoio || apoiado}
+              className="rotulo min-h-12 rounded-full bg-sodio px-7 text-noite transition hover:bg-[#ffb066] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {carregandoApoio
+                ? 'Registrando...'
+                : apoiado
+                  ? 'Chamado apoiado'
+                  : 'Eu também vi'}
+            </button>
+          </div>
+
+          {mensagemApoio && (
+            <p role="status" className="mt-4 text-sm text-mudo">
+              {mensagemApoio}
+            </p>
+          )}
         </div>
 
         <div>
@@ -109,12 +268,18 @@ export default function DetalheChamado() {
             O CAMINHO DA SOLUÇÃO
           </h2>
 
-          <div className="mt-10">
-            <CaminhoLuz
-              paradas={paradas}
-              atual={indiceAtual}
-            />
-          </div>
+          {chamado.status === 'CANCELADO' ? (
+            <p className="mt-8 rounded-xl border border-borda bg-noite-2 p-6 text-mudo">
+              Este chamado foi cancelado.
+            </p>
+          ) : (
+            <div className="mt-10">
+              <CaminhoLuz
+                paradas={paradas}
+                atual={Math.max(0, indiceAtual)}
+              />
+            </div>
+          )}
         </div>
 
         <div className="rounded-2xl border border-borda bg-noite-2 p-6">
@@ -124,8 +289,8 @@ export default function DetalheChamado() {
           </h2>
 
           <p className="mt-4 leading-relaxed text-mudo">
-            As informações da análise serão exibidas aqui após a
-            integração com a API.
+            A análise inteligente será exibida aqui quando essa informação
+            estiver disponível na API.
           </p>
         </div>
 
@@ -135,11 +300,36 @@ export default function DetalheChamado() {
             ATUALIZAÇÕES DO CHAMADO
           </h2>
 
-          <div className="mt-6 rounded-xl border border-borda p-6">
-            <p className="text-mudo">
-              O histórico de atualizações será carregado pela API.
-            </p>
-          </div>
+          {atualizacoes.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-borda p-6">
+              <p className="text-mudo">
+                Nenhuma atualização foi registrada até o momento.
+              </p>
+            </div>
+          ) : (
+            <ol className="mt-6 space-y-4">
+              {atualizacoes.map((atualizacao) => (
+                <li
+                  key={atualizacao.id}
+                  className="rounded-xl border border-borda bg-noite-2 p-6"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <SeloStatus
+                      status={atualizacao.status}
+                      tamanho="md"
+                    />
+                    <time className="text-xs text-mudo">
+                      {formatarData(atualizacao.criadoEm)}
+                    </time>
+                  </div>
+
+                  <p className="mt-4 leading-relaxed">
+                    {atualizacao.mensagem}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
       </section>
     </div>
