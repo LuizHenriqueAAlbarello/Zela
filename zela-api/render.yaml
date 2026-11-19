@@ -1,0 +1,18 @@
+# Blueprint do Render: New > Blueprint > escolha este repositório.
+# O usuário e a senha do banco NÃO ficam aqui: o Render pede os valores no painel (sync: false).
+services:
+  - type: web
+    name: zela-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DB_URL
+        value: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"

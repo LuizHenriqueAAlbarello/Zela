@@ -1,0 +1,13 @@
+GLOBAL SOLUTION 2026/2 - CITIZENTECH - DOMAIN DRIVEN DESIGN USING JAVA
+Projeto: Zela - Zeladoria Colaborativa
+
+RM      | Nome completo                    | Turma
+--------+----------------------------------+-------
+573347  | Lucas Luque Cabral               | 1TDSPV
+572727  | Luiz Henrique Alves Albarello    | 1TDSPF
+570469  | Matheus Rodrigues Serrão         | 1TDSPF
+571844  | Vinicius Silveira Espósito       | 1TDSPV
+
+API no Render: PREENCHER (https://NOME-DO-SERVICO.onrender.com)
+Vídeo (YouTube, não listado): PREENCHER (https://youtu.be/...)
+Front-end do grupo: https://github.com/LuizHenriqueAAlbarello/Zela

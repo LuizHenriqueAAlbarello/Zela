@@ -1,0 +1,1844 @@
+{
+  "info": {
+    "name": "Zela API - Global Solution 2026/2",
+    "description": "Coleção de testes da API Zela (DDD Using Java). Rode as pastas em ordem. Ajuste baseUrl para a URL do Render. Pré-requisito: rodar sql/01 e sql/02 (categoria 1 = Buraco na via). Cidadão 3 vem do sql/02 (Carla Nogueira).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "categoriaId",
+      "value": ""
+    },
+    {
+      "key": "cidadaoId",
+      "value": ""
+    },
+    {
+      "key": "cidadaoId2",
+      "value": ""
+    },
+    {
+      "key": "chamadoId",
+      "value": ""
+    },
+    {
+      "key": "apoioId",
+      "value": ""
+    },
+    {
+      "key": "atualizacaoId",
+      "value": ""
+    },
+    {
+      "key": "mensagemId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Saúde",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Categorias",
+      "item": [
+        {
+          "name": "Cadastrar categoria (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Praça sem manutenção\",\n  \"peso\": 2,\n  \"prazoDias\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('categoriaId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar por id (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar id inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "99999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Praça sem manutenção\",\n  \"peso\": 3,\n  \"prazoDias\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastro inválido: peso 9 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"peso\": 9,\n  \"prazoDias\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nome duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Buraco na via\",\n  \"peso\": 4,\n  \"prazoDias\": 15\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remover (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/{{categoriaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "{{categoriaId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Cidadãos",
+      "item": [
+        {
+          "name": "Cadastrar cidadão (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cidadaos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cidadaos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Souza\",\n  \"email\": \"ana.souza.teste@exemplo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('cidadaoId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastrar segundo cidadão (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cidadaos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cidadaos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Bruno Lima\",\n  \"email\": \"bruno.lima.teste@exemplo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('cidadaoId2', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cidadaos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cidadaos"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "E-mail inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cidadaos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cidadaos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Fulano\",\n  \"email\": \"isso-nao-e-email\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "E-mail duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cidadaos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cidadaos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana de novo\",\n  \"email\": \"ana.souza.teste@exemplo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Chamados e regras",
+      "item": [
+        {
+          "name": "Abrir chamado (201 + Location)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita da avenida.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('chamadoId', pm.response.json().id);",
+                  "pm.test('Chamado novo começa com 0 apoios', function () { pm.expect(pm.response.json().apoios).to.eql(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN01 duplicado mesmo endereço (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId2}}\",\n  \"descricao\": \"Buraco grande na faixa da direita da avenida.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fila de chamados com filtro (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados?bairro=Grajaú&status=ABERTO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados"
+              ],
+              "query": [
+                {
+                  "key": "bairro",
+                  "value": "Grajaú"
+                },
+                {
+                  "key": "status",
+                  "value": "ABERTO"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar chamado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chamado inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "99999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastro inválido: descrição curta (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": 1,\n  \"descricao\": \"curta\",\n  \"endereco\": \"Outro lugar, 1\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categoria inexistente (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 99999,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita da avenida.\",\n  \"endereco\": \"Outro lugar, 2\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar chamado (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita, piorou com a chuva.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Trocar o autor do chamado (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId2}}\",\n  \"descricao\": \"Buraco grande na faixa da direita, piorou com a chuva.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Mensagem explica a regra', function () { pm.expect(pm.response.json().mensagem).to.include('autor'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN05 nota antes de RESOLVIDO (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita da avenida.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978,\n  \"nota\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Método não suportado: PATCH (405)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"x\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 405', function () { pm.response.to.have.status(405); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Rota inexistente (404 em JSON)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/rota-que-nao-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rota-que-nao-existe"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Erro em JSON padronizado', function () { pm.expect(pm.response.json()).to.have.property('mensagem'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Apoios (RN03 e RN04)",
+      "item": [
+        {
+          "name": "Cidadão 2 apoia o chamado (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/apoios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "apoios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cidadaoId\": \"{{cidadaoId2}}\",\n  \"comentario\": \"Também passo por aqui todo dia.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('apoioId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN03 apoiar duas vezes (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/apoios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "apoios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cidadaoId\": \"{{cidadaoId2}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN03 apoiar o próprio chamado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/apoios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "apoios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cidadaoId\": \"{{cidadaoId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar apoios do chamado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/apoios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "apoios"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar comentário do apoio (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/apoios/{{apoioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "apoios",
+                "{{apoioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Já vi vários motoboys caírem aqui.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Atualizações e ciclo de vida (RN02)",
+      "item": [
+        {
+          "name": "ABERTO > EM_ANALISE (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Equipe vai vistoriar amanhã.\",\n  \"autor\": \"Carla Nogueira\",\n  \"novoStatus\": \"EM_ANALISE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('atualizacaoId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transição inválida EM_ANALISE > RESOLVIDO (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Pulou etapa.\",\n  \"autor\": \"Carla Nogueira\",\n  \"novoStatus\": \"RESOLVIDO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Status desconhecido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Teste.\",\n  \"autor\": \"Carla\",\n  \"novoStatus\": \"FINALIZADO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "EM_ANALISE > EM_EXECUCAO (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Equipe no local.\",\n  \"autor\": \"Carla Nogueira\",\n  \"novoStatus\": \"EM_EXECUCAO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualização só com mensagem, sem status (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Equipe a caminho com o material.\",\n  \"autor\": \"Carla Nogueira\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('mensagemId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remover atualização só com mensagem (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/atualizacoes/{{mensagemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "atualizacoes",
+                "{{mensagemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "EM_EXECUCAO > RESOLVIDO (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Buraco tapado.\",\n  \"autor\": \"Carla Nogueira\",\n  \"novoStatus\": \"RESOLVIDO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN02 atualizar chamado RESOLVIDO (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Mais uma.\",\n  \"autor\": \"Carla Nogueira\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Histórico do chamado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "atualizacoes"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chamado inexistente no histórico (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/99999/atualizacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "99999",
+                "atualizacoes"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN05 avaliar chamado RESOLVIDO com nota 5 (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita, piorou com a chuva.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978,\n  \"nota\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chamado RESOLVIDO: nota + outra descrição (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Tentando reescrever a descrição depois de resolvido.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978,\n  \"nota\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chamado RESOLVIDO sem nota não é editado (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": 1,\n  \"cidadaoId\": \"{{cidadaoId}}\",\n  \"descricao\": \"Buraco grande na faixa da direita, piorou com a chuva.\",\n  \"endereco\": \"Rua do Teste, 100\",\n  \"bairro\": \"Grajaú\",\n  \"latitude\": -23.7655,\n  \"longitude\": -46.6978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Erro em JSON padronizado', function () { pm.expect(pm.response.json()).to.have.property('mensagem'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Apoio em chamado RESOLVIDO (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}/apoios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}",
+                "apoios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cidadaoId\": 3,\n  \"comentario\": \"Ainda vejo o problema.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Mensagem de chamado encerrado', function () { pm.expect(pm.response.json().mensagem).to.include('não recebe novos apoios'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remover atualização que mudou o status (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/atualizacoes/{{atualizacaoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "atualizacoes",
+                "{{atualizacaoId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Erro em JSON padronizado', function () { pm.expect(pm.response.json()).to.have.property('mensagem'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remover chamado com filhos (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chamados/{{chamadoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chamados",
+                "{{chamadoId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
