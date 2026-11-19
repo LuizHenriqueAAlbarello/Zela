@@ -8,7 +8,7 @@ import PerfilIntegrante from './pages/PerfilIntegrante'
 import Sobre from './pages/Sobre'
 import Faq from './pages/Faq'
 import Contato from './pages/Contato'
-import EmObra from './pages/EmObra'
+import ListaChamados from './pages/ListaChamados'
 import NaoEncontrada from './pages/NaoEncontrada'
 import NovoChamado from './pages/NovoChamado'
 import DetalheChamado from './pages/DetalheChamado'
@@ -37,7 +37,7 @@ export default function App() {
       <main id="conteudo" className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/chamados" element={<EmObra titulo="Chamados" />} />
+          <Route path="/chamados" element={<ListaChamados />} />
           <Route path="/chamados/novo" element={<NovoChamado />} />
           <Route path="/chamados/:id" element={<DetalheChamado />} />
           <Route path="/sobre" element={<Sobre />} />
