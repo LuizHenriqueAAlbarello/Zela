@@ -70,3 +70,44 @@ async function lerErro(resposta: Response): Promise<ErroApi> {
 type Metodo = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 
+async function requisitar<T>(metodo: Metodo, caminho: string, corpo?: unknown, signal?: AbortSignal): Promise<T> {
+  if (!URL_BASE) {
+    throw new ErroApi(0, 'A URL da API não está configurada. Crie o arquivo .env com VITE_API_URL.')
+  }
+
+  const temCorpo = corpo !== undefined
+  let resposta: Response
+  try {
+    resposta = await fetch(`${URL_BASE}${caminho}`, {
+      method: metodo,
+      
+      headers: temCorpo ? { Accept: 'application/json', 'Content-Type': 'application/json' } : { Accept: 'application/json' },
+      body: temCorpo ? JSON.stringify(corpo) : undefined,
+      signal,
+    })
+  } catch (erro) {
+    if (ehCancelamento(erro)) throw erro
+    
+    throw new ErroApi(0, 'Não conseguimos falar com o servidor. Confira sua conexão e tente de novo.')
+  }
+
+  if (!resposta.ok) throw await lerErro(resposta)
+
+  
+  if (resposta.status === 204) return undefined as T
+
+  try {
+    return (await resposta.json()) as T
+  } catch (erro) {
+    if (ehCancelamento(erro)) throw erro
+    throw new ErroApi(resposta.status, 'O servidor respondeu em um formato inesperado.')
+  }
+}
+
+
+export const api = {
+  get: <T>(caminho: string, signal?: AbortSignal) => requisitar<T>('GET', caminho, undefined, signal),
+  post: <T>(caminho: string, corpo?: unknown, signal?: AbortSignal) => requisitar<T>('POST', caminho, corpo ?? {}, signal),
+  put: <T>(caminho: string, corpo: unknown, signal?: AbortSignal) => requisitar<T>('PUT', caminho, corpo, signal),
+  apagar: (caminho: string, signal?: AbortSignal) => requisitar<void>('DELETE', caminho, undefined, signal),
+}
