@@ -34,7 +34,6 @@ public class ChamadoResponse {
 
     private Integer nota;
 
-    /** Total de apoios ("eu também vi") do chamado: o front mostra na lista e no detalhe. */
     private Integer apoios;
 
     public ChamadoResponse() {

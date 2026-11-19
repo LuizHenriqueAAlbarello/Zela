@@ -10,11 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Substitui a página de erro padrão do Spring Boot (/error).
- * O GlobalExceptionHandler trata o que acontece dentro dos controllers; este cobre o que acontece antes deles
- * (no Tomcat ou num filtro). Assim nenhum erro da API sai como página HTML ou com stack trace.
- */
 @RestController
 public class ErroPadraoController implements ErrorController {
 

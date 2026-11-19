@@ -30,10 +30,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Handler global: todo erro da API sai como JSON padronizado (ErroResponse).
- * Nenhum stack trace ou detalhe de SQL chega ao cliente.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -104,17 +100,12 @@ public class GlobalExceptionHandler {
         return resposta(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno ao acessar os dados. Tente novamente.", req, null);
     }
 
-    /** Falha do Spring JDBC (ex.: banco fora do ar, pool esgotado). Detalhe só no log. */
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErroResponse> acessoDados(DataAccessException ex, HttpServletRequest req) {
         log.error("Falha de acesso ao banco em {} {}", req.getMethod(), req.getRequestURI(), ex);
         return resposta(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno ao acessar os dados. Tente novamente.", req, null);
     }
 
-    /**
-     * Último recurso. Exceções do próprio Spring MVC que já carregam um status HTTP (406, 413, 400 de
-     * parâmetro de rota...) mantêm esse status; qualquer outra coisa vira 500 com mensagem genérica.
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponse> inesperado(Exception ex, HttpServletRequest req) {
         if (ex instanceof ErrorResponse erroSpring) {

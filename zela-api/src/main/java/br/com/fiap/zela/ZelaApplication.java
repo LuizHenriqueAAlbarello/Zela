@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ZelaApplication {
 
     static {
-        // Evita ORA-01882 (timezone region not found) em containers Docker ao falar com o Oracle da FIAP
         System.setProperty("oracle.jdbc.timezoneAsRegion", "false");
     }
 

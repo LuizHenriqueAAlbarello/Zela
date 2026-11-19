@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** Corpo padronizado de TODO erro da API (sempre JSON, nunca HTML, nunca stack trace). */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErroResponse {
 

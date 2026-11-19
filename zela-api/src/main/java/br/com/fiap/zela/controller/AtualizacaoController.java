@@ -28,11 +28,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Histórico do chamado (lado N do 1:N Chamado -> Atualizacao).
- * Rotas aninhadas: /chamados/{id}/atualizacoes. Rotas planas: /atualizacoes.
- * Aqui moram RN02 (chamado encerrado não recebe atualização) e o controle de transição de status.
- */
 @RestController
 public class AtualizacaoController {
 
@@ -45,8 +40,6 @@ public class AtualizacaoController {
         this.chamadoDao = chamadoDao;
         this.mapper = mapper;
     }
-
-    // ---------- rotas aninhadas do 1:N ----------
 
     @GetMapping("/chamados/{chamadoId}/atualizacoes")
     public List<AtualizacaoResponse> listarDoChamado(@PathVariable Long chamadoId) {
@@ -63,8 +56,6 @@ public class AtualizacaoController {
         Chamado chamado = chamadoOuNaoEncontrado(chamadoId);
         return registrar(chamado, request);
     }
-
-    // ---------- CRUD plano ----------
 
     @PostMapping("/atualizacoes")
     @Transactional
@@ -89,7 +80,6 @@ public class AtualizacaoController {
         return mapper.map(buscarOuFalhar(id), AtualizacaoResponse.class);
     }
 
-    /** Corrige mensagem e autor. O novo status registrado e o chamado não mudam por aqui. */
     @PutMapping("/atualizacoes/{id}")
     public AtualizacaoResponse atualizar(@PathVariable Long id, @Valid @RequestBody AtualizacaoEdicaoRequest request) {
         Atualizacao atual = buscarOuFalhar(id);
@@ -99,7 +89,6 @@ public class AtualizacaoController {
         return mapper.map(atual, AtualizacaoResponse.class);
     }
 
-    /** Só remove mensagens simples. A atualização que mudou o status é o registro do ciclo de vida (409). */
     @DeleteMapping("/atualizacoes/{id}")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         Atualizacao atual = buscarOuFalhar(id);
@@ -110,8 +99,6 @@ public class AtualizacaoController {
         atualizacaoDao.remover(id);
         return ResponseEntity.noContent().build();
     }
-
-    // ---------- regra de negócio ----------
 
     private ResponseEntity<AtualizacaoResponse> registrar(Chamado chamado, AtualizacaoRequest request) {
         // RN02: chamado RESOLVIDO ou CANCELADO não recebe novas atualizações
@@ -135,7 +122,7 @@ public class AtualizacaoController {
 
         Atualizacao salva = atualizacaoDao.inserir(nova);
         if (novoStatus != null) {
-            chamadoDao.atualizarStatus(chamado.getId(), novoStatus);   // mesma transação da inserção
+            chamadoDao.atualizarStatus(chamado.getId(), novoStatus);
         }
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()

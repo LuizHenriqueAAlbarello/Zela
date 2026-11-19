@@ -1,10 +1,5 @@
 package br.com.fiap.zela.model;
 
-/**
- * Ciclo de vida do chamado (igual em Java, Python e no banco):
- * ABERTO -> EM_ANALISE -> EM_EXECUCAO -> RESOLVIDO.
- * De ABERTO ou EM_ANALISE também pode ir para CANCELADO.
- */
 public enum StatusChamado {
     ABERTO,
     EM_ANALISE,

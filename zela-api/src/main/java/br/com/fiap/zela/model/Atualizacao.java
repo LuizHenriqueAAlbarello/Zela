@@ -2,9 +2,6 @@ package br.com.fiap.zela.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Entrada do histórico de um chamado; pode carregar uma mudança de status.
- */
 public class Atualizacao {
 
     private Long id;

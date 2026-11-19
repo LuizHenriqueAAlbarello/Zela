@@ -15,11 +15,11 @@ O cidadão registra problemas do espaço público (buraco, lâmpada queimada, li
 
 ## Links
 
-- **API no Render:** `PREENCHER: https://NOME-DO-SERVICO.onrender.com`
+- **API no Render:** https://zela-api-bkwx.onrender.com (teste: https://zela-api-bkwx.onrender.com/health)
 - **Vídeo (YouTube, não listado):** `PREENCHER: https://youtu.be/...`
 - **Front-end do grupo (consome esta API):** https://github.com/LuizHenriqueAAlbarello/Zela
 
-> ⚠️ Antes de enviar ao Portal, troque os dois `PREENCHER` acima, os do `integrantes.txt` e os da capa do PDF. Sem o link da API, a correção pode descontar 10 pontos (API fora do ar ou link quebrado).
+> ⚠️ Antes de enviar ao Portal, troque o `PREENCHER` do vídeo acima, o do `integrantes.txt` e o da capa do PDF.
 
 > No plano gratuito o Render "dorme" após alguns minutos sem uso. A primeira chamada pode levar cerca de 1 minuto: abra `/health` antes de testar.
 

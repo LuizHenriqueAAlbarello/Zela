@@ -30,11 +30,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Apoios ("eu também vi isso"): evitam chamados duplicados e elevam a prioridade.
- * Rotas aninhadas: /chamados/{id}/apoios. Rotas planas: /apoios.
- * Aqui moram RN03 (não apoiar o próprio chamado nem apoiar duas vezes) e RN04 (prioridade sobe a cada 5 apoios).
- */
 @RestController
 public class ApoioController {
 
@@ -53,8 +48,6 @@ public class ApoioController {
         this.mapper = mapper;
     }
 
-    // ---------- rotas aninhadas ----------
-
     @GetMapping("/chamados/{chamadoId}/apoios")
     public List<ApoioResponse> listarDoChamado(@PathVariable Long chamadoId) {
         chamadoOuNaoEncontrado(chamadoId);
@@ -70,8 +63,6 @@ public class ApoioController {
         Chamado chamado = chamadoOuNaoEncontrado(chamadoId);
         return registrar(chamado, request);
     }
-
-    // ---------- CRUD plano ----------
 
     @PostMapping("/apoios")
     @Transactional
@@ -96,7 +87,6 @@ public class ApoioController {
         return mapper.map(buscarOuFalhar(id), ApoioResponse.class);
     }
 
-    /** Só o comentário pode ser alterado: trocar chamado ou cidadão seria outro apoio. */
     @PutMapping("/apoios/{id}")
     public ApoioResponse atualizar(@PathVariable Long id, @Valid @RequestBody ApoioComentarioRequest request) {
         Apoio atual = buscarOuFalhar(id);
@@ -114,10 +104,7 @@ public class ApoioController {
         return ResponseEntity.noContent().build();
     }
 
-    // ---------- regras de negócio ----------
-
     private ResponseEntity<ApoioResponse> registrar(Chamado chamado, ApoioRequest request) {
-        // Chamado RESOLVIDO ou CANCELADO não recebe apoio (mesma lógica da RN02): não há mais demanda a medir
         if (chamado.encerrado()) {
             throw new RegraNegocioException("O chamado " + chamado.getProtocolo() + " está "
                     + chamado.getStatus() + " e não recebe novos apoios.");
@@ -149,7 +136,6 @@ public class ApoioController {
         return ResponseEntity.created(location).body(mapper.map(salvo, ApoioResponse.class));
     }
 
-    /** RN04: prioridade = peso da categoria + 1 a cada 5 apoios, no máximo 5. */
     private void recalcularPrioridade(Chamado chamado) {
         Categoria categoria = categoriaDao.buscarPorId(chamado.getCategoriaId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria", chamado.getCategoriaId()));

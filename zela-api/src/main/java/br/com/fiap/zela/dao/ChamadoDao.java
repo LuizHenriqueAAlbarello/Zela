@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Tabela tb_zela_chamado (sequence sq_tb_zela_chamado). Raiz do agregado. */
 @Repository
 public class ChamadoDao extends BaseDao {
 
@@ -65,7 +64,6 @@ public class ChamadoDao extends BaseDao {
         }
     }
 
-    /** Fila ordenada por prioridade (maior primeiro) e, em empate, pelo mais antigo. Filtros opcionais. */
     public List<Chamado> listar(String bairro, Long categoriaId, StatusChamado status) {
         StringBuilder sql = new StringBuilder("SELECT " + COLUNAS + " FROM tb_zela_chamado WHERE 1 = 1");
         List<Object> parametros = new ArrayList<>();
@@ -122,7 +120,6 @@ public class ChamadoDao extends BaseDao {
         }
     }
 
-    /** Atualiza os dados editáveis. Status muda só por atualização (POST .../atualizacoes). */
     public boolean atualizar(Chamado c) {
         Connection con = abrirConexao();
         String sql = "UPDATE tb_zela_chamado SET cd_categoria = ?, cd_cidadao = ?, ds_chamado = ?, ds_endereco = ?, "
@@ -193,10 +190,6 @@ public class ChamadoDao extends BaseDao {
         }
     }
 
-    /**
-     * RN01: procura outro chamado EM ABERTO (ABERTO, EM_ANALISE ou EM_EXECUCAO) da mesma categoria no mesmo endereço.
-     * ignorarId = 0 no cadastro; no PUT é o id do próprio chamado.
-     */
     public Optional<Long> buscarAbertoDuplicado(Long categoriaId, String endereco, Long ignorarId) {
         Connection con = abrirConexao();
         String sql = "SELECT cd_chamado FROM tb_zela_chamado "
@@ -217,7 +210,6 @@ public class ChamadoDao extends BaseDao {
         }
     }
 
-    /** Chamado com atualizações ou apoios não pode ser removido (409). */
     public boolean possuiFilhos(Long id) {
         Connection con = abrirConexao();
         String sql = "SELECT (SELECT COUNT(*) FROM tb_zela_atualizacao WHERE cd_chamado = ?) "

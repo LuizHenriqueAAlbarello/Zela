@@ -7,10 +7,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
-/**
- * Libera o CORS para o front-end do grupo chamar a API (local ou publicado).
- * CORS_ORIGINS aceita uma lista separada por vírgula. Ausente ou vazia: libera todas as origens.
- */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
@@ -20,7 +16,6 @@ public class CorsConfig implements WebMvcConfigurer {
         this.origens = interpretar(origens);
     }
 
-    /** Remove espaços e itens vazios. Se nada sobrar, libera todas as origens ("*"). */
     static String[] interpretar(String valor) {
         if (valor == null) {
             return new String[]{"*"};

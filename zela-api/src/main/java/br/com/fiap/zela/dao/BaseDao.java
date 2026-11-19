@@ -13,12 +13,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-/**
- * Base dos DAOs. Recebe o DataSource pelo construtor e entrega conexões.
- * DataSourceUtils faz a conexão participar da transação aberta com @Transactional
- * (necessário quando uma operação grava em mais de uma tabela).
- * Nenhuma persistência com JPA/Hibernate/Spring Data: só JDBC e PreparedStatement.
- */
 public abstract class BaseDao {
 
     private static final int ORA_UNIQUE_VIOLADA = 1;
@@ -42,7 +36,6 @@ public abstract class BaseDao {
         DataSourceUtils.releaseConnection(conexao, dataSource);
     }
 
-    /** Próximo valor da sequence (nome vem sempre de constante do DAO, nunca do usuário). */
     protected Long proximoId(Connection conexao, String sequence) throws SQLException {
         String sql = "SELECT " + sequence + ".NEXTVAL FROM dual";
         try (PreparedStatement ps = conexao.prepareStatement(sql);
@@ -52,11 +45,6 @@ public abstract class BaseDao {
         }
     }
 
-    /**
-     * Traduz SQLException para o status HTTP certo. A mensagem do Oracle nunca chega ao cliente:
-     * duplicidade, FK e CHECK viram 409; texto grande demais ou campo nulo viram 400;
-     * o resto vira 500 genérico (detalhe só no log).
-     */
     protected RuntimeException traduzir(String operacao, SQLException e) {
         switch (e.getErrorCode()) {
             case ORA_UNIQUE_VIOLADA:

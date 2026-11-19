@@ -33,12 +33,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Chamados de zeladoria. Aqui moram RN01 (duplicidade), RN04 (prioridade) e RN05 (nota só se RESOLVIDO).
- * O status NÃO muda por PUT: ele só avança por atualização (POST /chamados/{id}/atualizacoes).
- * Chamado encerrado não é editado: o CANCELADO fica como está e o RESOLVIDO só recebe a nota.
- * O autor (cidadaoId) é fixo: o PUT não troca quem abriu o chamado.
- */
 @RestController
 @RequestMapping("/chamados")
 public class ChamadoController {
@@ -86,7 +80,6 @@ public class ChamadoController {
         return ResponseEntity.created(location).body(paraResposta(salvo));
     }
 
-    /** Fila da prefeitura: ordenada por prioridade, com filtros opcionais por bairro, categoria e status. */
     @GetMapping
     public List<ChamadoResponse> listar(@RequestParam(required = false) String bairro,
                                         @RequestParam(required = false) Long categoriaId,
@@ -136,7 +129,6 @@ public class ChamadoController {
             return paraResposta(atual);
         }
 
-        // Daqui em diante o chamado está em aberto (ABERTO, EM_ANALISE ou EM_EXECUCAO)
         if (request.getNota() != null && !atual.aceitaAvaliacao()) {               // RN05
             throw new RegraNegocioException("A nota só pode ser registrada quando o chamado estiver RESOLVIDO.");
         }
@@ -150,7 +142,6 @@ public class ChamadoController {
         atual.setBairro(request.getBairro().trim());
         atual.setLatitude(request.getLatitude());
         atual.setLongitude(request.getLongitude());
-        // RN04: prioridade recalculada com o peso da categoria (possivelmente nova) e os apoios atuais
         atual.setPrioridade(Chamado.calcularPrioridade(categoria.getPeso(), apoioDao.contarPorChamado(id)));
         atual.setPrazoPrevisto(atual.getDataAbertura().toLocalDate().plusDays(categoria.getPrazoDias()));
 
@@ -168,9 +159,6 @@ public class ChamadoController {
         return ResponseEntity.noContent().build();
     }
 
-    // ---------- regras e apoio ----------
-
-    /** RN01: não pode existir outro chamado em aberto da mesma categoria no mesmo endereço. */
     private void validarDuplicidade(Long categoriaId, String endereco, Long ignorarId) {
         chamadoDao.buscarAbertoDuplicado(categoriaId, endereco, ignorarId).ifPresent(existente -> {
             throw new RegraNegocioException("Já existe o chamado em aberto #" + existente
@@ -178,7 +166,6 @@ public class ChamadoController {
         });
     }
 
-    /** true se o corpo do PUT muda algum dado do chamado além da nota (usado no chamado RESOLVIDO). */
     private boolean alteraDados(Chamado atual, ChamadoRequest request) {
         return !Objects.equals(atual.getCategoriaId(), request.getCategoriaId())
                 || !mesmoTexto(atual.getDescricao(), request.getDescricao())
@@ -192,7 +179,6 @@ public class ChamadoController {
         return novo != null && atual != null && atual.trim().equals(novo.trim());
     }
 
-    /** compareTo ignora a escala: -23.7655 e -23.765500 (como o Oracle devolve) são o mesmo ponto. */
     private static boolean mesmoNumero(BigDecimal atual, BigDecimal novo) {
         if (atual == null || novo == null) {
             return atual == null && novo == null;
@@ -211,7 +197,6 @@ public class ChamadoController {
                 .orElseThrow(() -> new RequisicaoInvalidaException("Categoria " + categoriaId + " não encontrada."));
     }
 
-    /** Converte o model no DTO de saída (ModelMapper) e acrescenta o total de apoios do chamado. */
     private ChamadoResponse paraResposta(Chamado chamado) {
         ChamadoResponse resposta = mapper.map(chamado, ChamadoResponse.class);
         resposta.setApoios(apoioDao.contarPorChamado(chamado.getId()));

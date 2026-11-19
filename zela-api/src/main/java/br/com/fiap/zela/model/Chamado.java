@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Raiz do agregado: um problema do espaço público registrado por um cidadão.
- */
 public class Chamado {
 
     private Long id;
@@ -82,22 +79,18 @@ public class Chamado {
     public Integer getNota() { return nota; }
     public void setNota(Integer nota) { this.nota = nota; }
 
-    /** RN04: prioridade = peso da categoria + 1 a cada 5 apoios, limitada a 5. */
     public static int calcularPrioridade(int pesoCategoria, int totalApoios) {
         return Math.min(5, pesoCategoria + (totalApoios / 5));
     }
 
-    /** RESOLVIDO e CANCELADO são estados finais do ciclo de vida. */
     public boolean encerrado() {
         return status != null && status.encerrado();
     }
 
-    /** O autor do chamado é fixo: usado na RN03 (não apoiar o próprio) e para impedir troca de autor no PUT. */
     public boolean foiAbertoPor(Long idCidadao) {
         return idCidadao != null && idCidadao.equals(cidadaoId);
     }
 
-    /** RN05: só chamado RESOLVIDO aceita nota de avaliação. */
     public boolean aceitaAvaliacao() {
         return status == StatusChamado.RESOLVIDO;
     }

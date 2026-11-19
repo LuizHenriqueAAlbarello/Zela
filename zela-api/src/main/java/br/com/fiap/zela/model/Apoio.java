@@ -2,9 +2,6 @@ package br.com.fiap.zela.model;
 
 import java.time.LocalDateTime;
 
-/**
- * Apoio de um cidadão a um chamado já existente ("eu também vi isso").
- */
 public class Apoio {
 
     private Long id;

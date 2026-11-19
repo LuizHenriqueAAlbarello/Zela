@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/** Rota simples para o Render (e o professor) verificarem que a API está no ar. Não toca o banco. */
 @RestController
 public class HealthController {
 

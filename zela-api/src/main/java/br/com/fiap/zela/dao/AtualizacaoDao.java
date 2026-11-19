@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Tabela tb_zela_atualizacao (sequence sq_tb_zela_atualizacao). Histórico do chamado (lado N do 1:N). */
 @Repository
 public class AtualizacaoDao extends BaseDao {
 
@@ -69,7 +68,6 @@ public class AtualizacaoDao extends BaseDao {
         }
     }
 
-    /** Histórico de um chamado, do mais antigo para o mais novo. */
     public List<Atualizacao> listarPorChamado(Long chamadoId) {
         Connection con = abrirConexao();
         String sql = "SELECT " + COLUNAS + " FROM tb_zela_atualizacao WHERE cd_chamado = ? "
@@ -105,7 +103,6 @@ public class AtualizacaoDao extends BaseDao {
         }
     }
 
-    /** Só mensagem e autor podem ser corrigidos; o histórico de status não é reescrito. */
     public boolean atualizar(Atualizacao a) {
         Connection con = abrirConexao();
         String sql = "UPDATE tb_zela_atualizacao SET ds_mensagem = ?, nm_autor = ? WHERE cd_atualizacao = ?";

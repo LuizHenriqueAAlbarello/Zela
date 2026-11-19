@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Tabela tb_zela_categoria (sequence sq_tb_zela_categoria). */
 @Repository
 public class CategoriaDao extends BaseDao {
 
@@ -105,7 +104,6 @@ public class CategoriaDao extends BaseDao {
         }
     }
 
-    /** Nome já usado por OUTRA categoria (ignorarId = 0 no cadastro). */
     public boolean existeNome(String nome, Long ignorarId) {
         Connection con = abrirConexao();
         String sql = "SELECT COUNT(*) FROM tb_zela_categoria WHERE UPPER(nm_categoria) = UPPER(?) AND cd_categoria <> ?";

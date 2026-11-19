@@ -1,8 +1,5 @@
 package br.com.fiap.zela.model;
 
-/**
- * Cidadão que abre ou apoia chamados.
- */
 public class Cidadao {
 
     private Long id;

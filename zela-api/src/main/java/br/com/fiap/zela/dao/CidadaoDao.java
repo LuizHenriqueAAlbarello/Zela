@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Tabela tb_zela_cidadao (sequence sq_tb_zela_cidadao). */
 @Repository
 public class CidadaoDao extends BaseDao {
 
@@ -120,7 +119,6 @@ public class CidadaoDao extends BaseDao {
         }
     }
 
-    /** Tem chamados abertos por ele ou apoios dados: impede a remoção (409). */
     public boolean possuiVinculos(Long id) {
         Connection con = abrirConexao();
         String sql = "SELECT (SELECT COUNT(*) FROM tb_zela_chamado WHERE cd_cidadao = ?) "

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Tabela tb_zela_apoio (sequence sq_tb_zela_apoio). "Eu também vi isso" de um cidadão num chamado. */
 @Repository
 public class ApoioDao extends BaseDao {
 
@@ -96,7 +95,6 @@ public class ApoioDao extends BaseDao {
         }
     }
 
-    /** Só o comentário pode ser alterado: trocar chamado ou cidadão seria outro apoio. */
     public boolean atualizar(Apoio a) {
         Connection con = abrirConexao();
         String sql = "UPDATE tb_zela_apoio SET ds_comentario = ? WHERE cd_apoio = ?";
@@ -124,7 +122,6 @@ public class ApoioDao extends BaseDao {
         }
     }
 
-    /** RN03: o mesmo cidadão não apoia o mesmo chamado duas vezes. */
     public boolean existe(Long chamadoId, Long cidadaoId) {
         Connection con = abrirConexao();
         String sql = "SELECT COUNT(*) FROM tb_zela_apoio WHERE cd_chamado = ? AND cd_cidadao = ?";
@@ -142,7 +139,6 @@ public class ApoioDao extends BaseDao {
         }
     }
 
-    /** Usado no cálculo da prioridade (RN04). */
     public int contarPorChamado(Long chamadoId) {
         Connection con = abrirConexao();
         String sql = "SELECT COUNT(*) FROM tb_zela_apoio WHERE cd_chamado = ?";

@@ -8,6 +8,6 @@ RM      | Nome completo                    | Turma
 570469  | Matheus Rodrigues Serrão         | 1TDSPF
 571844  | Vinicius Silveira Espósito       | 1TDSPV
 
-API no Render: PREENCHER (https://NOME-DO-SERVICO.onrender.com)
+API no Render: https://zela-api-bkwx.onrender.com (teste: https://zela-api-bkwx.onrender.com/health)
 Vídeo (YouTube, não listado): PREENCHER (https://youtu.be/...)
 Front-end do grupo: https://github.com/LuizHenriqueAAlbarello/Zela

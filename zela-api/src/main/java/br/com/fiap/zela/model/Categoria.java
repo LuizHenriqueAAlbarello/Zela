@@ -1,8 +1,5 @@
 package br.com.fiap.zela.model;
 
-/**
- * Categoria do problema urbano (buraco, iluminação...). Define peso inicial da prioridade e prazo em dias.
- */
 public class Categoria {
 
     private Long id;
