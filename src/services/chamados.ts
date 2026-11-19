@@ -2,6 +2,7 @@ import { api } from './api'
 import { categoriaDaApi } from './categorias'
 import type {
   Atualizacao,
+  AtualizacaoApi,
   Chamado,
   ChamadoApi,
   NovoChamado,
@@ -52,11 +53,18 @@ export async function criarChamado(
 }
 
 /** GET /chamados/{id}/atualizacoes: histórico. */
-export function listarAtualizacoes(
+export async function listarAtualizacoes(
   id: number,
   signal?: AbortSignal,
 ): Promise<Atualizacao[]> {
-  return api.get<Atualizacao[]>(`/chamados/${id}/atualizacoes`, signal)
+  const dados = await api.get<AtualizacaoApi[]>(`/chamados/${id}/atualizacoes`, signal)
+  return dados.map((item) => ({
+    id: item.id,
+    status: item.novoStatus,
+    mensagem: item.mensagem,
+    autor: item.autor,
+    criadoEm: item.dataAtualizacao,
+  }))
 }
 
 /** POST /chamados/{id}/apoios: o cidadão apoia um chamado ("eu também vi isso"). */

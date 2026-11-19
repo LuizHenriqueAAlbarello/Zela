@@ -1,4 +1,3 @@
-
 export type StatusChamado =
   | 'ABERTO'
   | 'EM_ANALISE'
@@ -76,9 +75,19 @@ export interface NovoChamado {
 
 export interface Atualizacao {
   id: number
-  status: StatusChamado
+  status: StatusChamado | null
   mensagem: string
+  autor: string
   criadoEm: string
+}
+
+export interface AtualizacaoApi {
+  id: number
+  chamadoId: number
+  mensagem: string
+  autor: string
+  novoStatus: StatusChamado | null
+  dataAtualizacao: string
 }
 
 export interface TempoPorZona {

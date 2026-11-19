@@ -356,10 +356,14 @@ export default function DetalheChamado() {
                   className="rounded-xl border border-borda bg-noite-2 p-6"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <SeloStatus
-                      status={atualizacao.status}
-                      tamanho="md"
-                    />
+                    {atualizacao.status ? (
+                      <SeloStatus
+                        status={atualizacao.status}
+                        tamanho="md"
+                      />
+                    ) : (
+                      <span className="text-sm text-mudo">Atualização</span>
+                    )}
 
                     <time className="text-xs text-mudo">
                       {formatarData(atualizacao.criadoEm)}
@@ -369,6 +373,8 @@ export default function DetalheChamado() {
                   <p className="mt-4 leading-relaxed">
                     {atualizacao.mensagem}
                   </p>
+
+                  <p className="mt-2 text-xs text-mudo">{atualizacao.autor}</p>
                 </li>
               ))}
             </ol>
