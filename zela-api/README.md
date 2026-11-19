@@ -122,7 +122,7 @@ Resposta `201 Created` com `Location: /chamados/3`:
 
 ## Como rodar localmente
 
-1. **Banco:** no Oracle da FIAP, execute na ordem `sql/01_criar_tabelas.sql` e `sql/02_dados_exemplo.sql` (para recriar do zero, rode antes `sql/00_drop.sql`).
+1. **Banco:** ao subir pela primeira vez, a API (`config/InicializadorBanco`) confere se as tabelas existem e, se não existirem, roda sozinha `01_criar_tabelas.sql` e `02_dados_exemplo.sql`. Para fazer manualmente, no Oracle da FIAP, execute na ordem `sql/01_criar_tabelas.sql` e `sql/02_dados_exemplo.sql` (para recriar do zero, rode antes `sql/00_drop.sql`).
    Se as tabelas já tinham sido criadas com a versão anterior do script, rode só `sql/03_ajuste_textos_char.sql`: ele converte os textos para `VARCHAR2(n CHAR)` sem apagar dados (o limite passa a contar caracteres, igual ao `@Size` dos DTOs).
 2. **Variáveis de ambiente** (nunca no código; veja `.env.example`). O Spring Boot **não lê** arquivo `.env` sozinho: defina as variáveis no terminal, na Run Configuration do IntelliJ, no painel do Render ou com `docker run --env-file .env`.
 
