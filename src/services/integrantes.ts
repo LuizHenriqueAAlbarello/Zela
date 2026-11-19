@@ -22,10 +22,10 @@ export const INTEGRANTES: Integrante[] = [
   {
     rm: '571844',
     nome: 'Vinicius Silveira Espósito',
-    turma: '1TDSPF',
-    foto: '',
-    github: '',
-    linkedin: '',
+    turma: '1TDSPV',
+    foto: '/integrantes/rm571844.jpg',
+    github: 'https://github.com/ViniEsposito-dev',
+    linkedin: 'https://www.linkedin.com/in/vinicius-silveira-espósito-107a2a25a/',
   },
   {
     rm: '573347',
