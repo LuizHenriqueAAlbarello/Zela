@@ -67,25 +67,47 @@ export default function DetalheChamado() {
     async function carregarDados() {
       const numeroId = Number(id)
 
+      setChamado(null)
+      setAtualizacoes([])
+      setErro('')
+      setCarregando(true)
+
       if (!id || !Number.isInteger(numeroId) || numeroId <= 0) {
         setErro('O número do chamado é inválido.')
         setCarregando(false)
         return
       }
 
-      setCarregando(true)
-      setErro('')
-
       try {
-        const [dadosChamado, historico] = await Promise.all([
-          buscarChamado(numeroId, controlador.signal),
-          listarAtualizacoes(numeroId, controlador.signal),
-        ])
+        const dadosChamado = await buscarChamado(
+          numeroId,
+          controlador.signal,
+        )
+
+        if (controlador.signal.aborted) return
 
         setChamado(dadosChamado)
-        setAtualizacoes(historico)
+
+        try {
+          const historico = await listarAtualizacoes(
+            numeroId,
+            controlador.signal,
+          )
+
+          if (controlador.signal.aborted) return
+
+          setAtualizacoes(historico)
+        } catch (erroHistorico) {
+          if (ehCancelamento(erroHistorico)) return
+
+          setAtualizacoes([])
+        }
       } catch (erroRecebido) {
-        if (!ehCancelamento(erroRecebido)) {
+        if (ehCancelamento(erroRecebido)) return
+
+        if (erroRecebido instanceof ErroApi && erroRecebido.status === 404) {
+          setErro('Chamado não encontrado.')
+        } else {
           setErro(mensagemDoErro(erroRecebido))
         }
       } finally {
@@ -109,6 +131,18 @@ export default function DetalheChamado() {
     try {
       await apoiarChamado(chamado.id)
       setApoiado(true)
+      setChamado((atual) =>
+        atual
+          ? {
+              ...atual,
+              apoios: atual.apoios + 1,
+              prioridade: Math.min(
+                5,
+                atual.prioridade + (atual.apoios + 1) % 5 === 0 ? 1 : 0,
+              ),
+            }
+          : atual,
+      )
       setMensagemApoio('Seu apoio foi registrado com sucesso!')
     } catch (erroRecebido) {
       if (erroRecebido instanceof ErroApi && erroRecebido.status === 409) {
@@ -139,10 +173,16 @@ export default function DetalheChamado() {
     return (
       <div className="min-h-screen bg-noite px-6 py-20 text-papel">
         <div className="mx-auto max-w-2xl rounded-2xl border border-borda bg-noite-2 p-8">
-          <h1 className="titulo text-3xl">Não foi possível carregar</h1>
+          <h1 className="titulo text-3xl">
+            {erro === 'Chamado não encontrado.'
+              ? 'Chamado não encontrado'
+              : 'Não foi possível carregar'}
+          </h1>
+
           <p role="alert" className="mt-4 text-mudo">
             {erro || 'Chamado não encontrado.'}
           </p>
+
           <Link
             to="/chamados"
             className="rotulo mt-8 inline-flex rounded-full bg-sodio px-6 py-3 text-noite"
@@ -241,18 +281,21 @@ export default function DetalheChamado() {
               <p className="numeros mt-1 text-2xl">{chamado.apoios}</p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleApoiar}
-              disabled={carregandoApoio || apoiado}
-              className="rotulo min-h-12 rounded-full bg-sodio px-7 text-noite transition hover:bg-[#ffb066] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {carregandoApoio
-                ? 'Registrando...'
-                : apoiado
-                  ? 'Chamado apoiado'
-                  : 'Eu também vi'}
-            </button>
+            {chamado.status !== 'RESOLVIDO' &&
+              chamado.status !== 'CANCELADO' && (
+                <button
+                  type="button"
+                  onClick={handleApoiar}
+                  disabled={carregandoApoio || apoiado}
+                  className="rotulo min-h-12 rounded-full bg-sodio px-7 text-noite transition hover:bg-[#ffb066] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {carregandoApoio
+                    ? 'Registrando...'
+                    : apoiado
+                      ? 'Chamado apoiado'
+                      : 'Eu também vi'}
+                </button>
+              )}
           </div>
 
           {mensagemApoio && (
@@ -318,6 +361,7 @@ export default function DetalheChamado() {
                       status={atualizacao.status}
                       tamanho="md"
                     />
+
                     <time className="text-xs text-mudo">
                       {formatarData(atualizacao.criadoEm)}
                     </time>
